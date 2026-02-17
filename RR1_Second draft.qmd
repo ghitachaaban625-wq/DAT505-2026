@@ -1,0 +1,715 @@
+---
+title: "Research project 1: final version"
+format: 
+  html:
+    self_contained: true
+    toc: true
+    embed-resources: true
+editor: visual
+author: Chita Chaaban
+date: Winter 2026
+---
+
+## Introduction:
+
+People engage with television shows and films not only for entertainment, but also as a means of identifying with fictional characters. Viewers often evaluate characters in relation to themselves, drawing comparisons in terms of values, behaviors, personality traits, and broader aspects of identity. This process of identification is central to how fictional narratives are experienced and interpreted, and it varies across individuals and narrative contexts.
+
+One way to capture this process is through perceived similarity, which refers to the extent to which an individual feels that a fictional character resembles them. The Self-Report Character Personality Quiz (SWCPQ) was designed to measure this dimension of identification. After completing a self-report personality questionnaire, respondents are asked to rate how similar they feel to fictional characters drawn from a wide range of cultural universes, including television series, films, animation, and comics. Similarity is reported on a six-point scale, providing a quantitative measure of identification with fictional characters. In addition to similarity ratings, the dataset includes demographic information such as age group, gender, and native language, as well as personality indicators.
+
+This report investigates whether perceived similarity to fictional characters varies according to the type of fictional universe in which those characters appear. Because fictional narratives differ in their level of realism, the opportunities for viewers to relate to characters and compare themselves to them may also differ. Specifically, it assesses whether characters originating from realistic versus fantastical narratives are associated with different levels of perceived similarity.
+
+Realist universes typically portray everyday social roles, familiar constraints, and plausible behaviors and reactions that closely resemble those encountered in ordinary life. In contrast, fantastical universes often incorporate supernatural elements, alternative rules governing the world, and exaggerated or non-human abilities. These structural differences between narrative worlds may influence the extent to which viewers can engage in self-referencing and perceive fictional characters as similar to themselves. Our hypothesis is that characters grounded in realistic social contexts may therefore facilitate stronger perceived similarity than characters operating in fantastical settings.
+
+Due to the size of the data set and the diversity of fictional universes represented, the analysis is restricted to the 50 most frequently rated universes among the 341 observed, in order to ensure adequate sample sizes and analytic tractability. These universes were subsequently classified into realist and fantastical categories based on predefined, nested criteria related to narrative realism (e.g., plausibility of events, adherence to real-world social rules, presence of supernatural elements). The classification process was supported by AI-assisted validation to ensure consistency.
+
+In addition to a main effect of fictional genre, the analysis considers gender and age group as moderating variables. Identification with fictional characters is not solely determined by narrative features, but may also depend on individual characteristics that shape how narratives are interpreted and experienced. Gender and age are both associated with differences in socialization, media exposure, and identity formation, which can influence how individuals relate to fictional characters and evaluate similarity. As a result, the contrast between realist and fantastical universes may not operate uniformly across groups. The effect of genre on perceived similarity may therefore vary depending on gender and age group, motivating the examination of interaction effects between fictional genre and these individual-level attributes.
+
+The question we are trying to answer is therefore: How does fictional genre (realistic versus fantastical) influence perceived similarity to fictional characters, and does this relationship vary across gender and age groups?
+
+**H1:** *Characters from realist fictional universes are associated with higher perceived similarity scores than characters from fantastical fictional universes.*
+
+Research on media and film preferences consistently shows that gender is systematically associated with genre engagement. Empirical studies find that men report stronger preferences for genres closely associated with fantastical and speculative elements, such as science fiction, fantasy, and action, whereas women report stronger preferences for genres centered on everyday social interactions, such as drama and romance (Märtens & Reinecke, 2021; Redondo & Holbrook, 2010). Because realist narratives more often emphasize interpersonal relationships, plausible social contexts, and emotionally grounded character development, these genres may facilitate stronger self–character comparison among women. Consequently, the perceived similarity advantage of realist over fantastical universes is expected to be larger for women than for men.
+
+**H2:** *The difference in perceived similarity between realist and fantastical universes will be stronger for women than for men.*
+
+Age has been shown to structure media preferences and genre engagement in systematic ways. Studies using survey and audience data demonstrate that genre choices vary across age groups, reflecting differences in life experience, motivations, and the types of narratives viewers find meaningful (Mares & Sun, 2010). Additional evidence suggests that as individuals age, media engagement becomes increasingly oriented toward meaningful, emotionally grounded content rather than novelty or spectacle (Mares et al., 2016). Given that realist universes are more likely to offer socially plausible situations and recognizable life contexts, older respondents may find it easier to relate to characters in these settings. As a result, the realism advantage in perceived similarity is expected to increase with age.
+
+**H3:** *The difference in perceived similarity between realist and fantastical universes will be stronger for older respondents than for younger respondents.*
+
+***Dataset:***
+
+Beyond perceived similarity ratings, the data set provides several individual-level attributes that are relevant for the analysis. Each respondent is characterized by demographic variables, including age group, gender, and native language, as well as personality indicators such as Enneagram type. In addition, similarity ratings are linked to specific fictional characters and the fictional universes to which those characters belong. Because respondents rate multiple characters generated by an algorithm, and because these characters originate from different fictional universes, part of the data cleaning resulted to a nested structure, with multiple character-level observations associated with the same respondent and universe. This structure allows the analysis to examine variation in perceived similarity both across fictional universes and across individuals.
+
+To make this structure suitable for hypothesis testing, several data preparation steps are required. In particular, the nested nature of the data necessitates a reorganization of the observations to ensure that comparisons across genres and individuals are meaningful. The preparation process therefore focuses on cleaning invalid or missing responses, standardizing key variables, and aggregating similarity ratings at an appropriate level of analysis. These steps allow the construction of a dataset in which each observation reflects a respondent’s average identification within a given fictional universe, while preserving relevant demographic and personality information for subsequent analysis.
+
+## Data Cleaning
+
+The SWCPQ dataset links respondent-level demographic characteristics to multiple similarity ratings generated for fictional characters across a wide range of narrative universes. Because each participant evaluates several characters produced by the quiz algorithm, the data contain repeated observations nested within respondents and fictional universes. This structure enables the analysis to examine how perceived similarity varies across narrative contexts while accounting for individual-level attributes such as gender and age group. To support hypothesis testing, the analysis focuses on constructing a respondent–universe unit of observation that captures average perceived similarity within a given fictional universe, while preserving the demographic variables required to assess moderation effects.
+
+Load packages and import raw data:
+
+```{r}
+library(tidyverse)
+library(readr)
+library(tidyr)
+library(stringr)
+library(dplyr)
+
+# Import raw SWCPQ survey data
+Data_ID <- read_delim(
+  "SWCPQ-Identification-Survey-Dataset-July2022.csv",
+  delim = "\t",
+  show_col_types = FALSE
+)
+
+```
+
+Clean respondent-level variables
+
+```{r}
+# Clean demographic variables and create a stable respondent identifier
+Data_clean <- Data_ID %>%
+  mutate(
+    # Recode placeholder values (0) as missing where 0 is not a valid response
+    gender = na_if(gender, 0),
+    engNat = na_if(engNat, 0),
+
+    # Convert categorical variables to factors
+    gender = factor(gender),
+    engNat = factor(engNat),
+
+    # Relabel coded age groups for interpretability
+    age_group = factor(
+      age_group,
+      levels = c(1, 2, 3),
+      labels = c("Group 1", "Group 2", "Group 3")
+    ),
+
+    # Relabel screen type categories
+    screen = factor(
+      screen,
+      levels = c(1, 2),
+      labels = c("Type 1", "Type 2")
+    ),
+
+    # Create a unique respondent identifier for later joins and aggregation
+    resp_id = row_number()
+  )
+
+```
+
+Reshape nested similarity ratings into long format
+
+```{r}
+
+# Convert nested similarity ratings into long format
+# Each row will represent one character rating by one respondent
+ratings_long <- Data_clean %>%
+  # Keep only variables required for rating processing and later analysis
+  select(
+    resp_id, year, age_group, gender, engNat, screen,
+    universes_selected, survey_ratings
+  ) %>%
+  
+  # Remove respondents without similarity ratings
+  filter(!is.na(survey_ratings)) %>%
+  
+  # Split nested rating strings into one row per rating
+  separate_rows(survey_ratings, sep = "\\], \\[") %>%
+  
+  # Remove leftover brackets from string encoding
+  mutate(
+    survey_ratings = str_replace_all(survey_ratings, "\\[|\\]", "")
+  )
+
+```
+
+Link character ratings to fictional universes:
+
+```{r}
+# Extract character ID, similarity score, and response time
+ratings_long <- ratings_long %>%
+  separate(
+    survey_ratings,
+    into = c("character_id", "similarity", "rating_time"),
+    sep = ", "
+  ) %>%
+  mutate(
+    # Clean character identifiers
+    character_id = str_replace_all(character_id, '"', ""),
+    
+    # Convert similarity scores and response times to numeric
+    similarity  = as.numeric(similarity),
+    rating_time = as.numeric(rating_time),
+    
+    # Extract universe code from character ID
+    universe = sub("/.*", "", character_id)
+  )
+```
+
+Aggregate similarity at the respondent–universe level
+
+```{r}
+# Keep only ratings from universes explicitly selected by respondents
+ratings_sel <- ratings_long[
+  str_detect(
+    ratings_long$universes_selected,
+    paste0("(^|,)", ratings_long$universe, "(,|$)")
+  ),
+]
+
+# Aggregate character ratings to the respondent–universe level
+user_universe_summary <- ratings_sel %>%
+  group_by(resp_id, universe) %>%
+  summarise(
+    n_ratings = n(),
+    mean_similarity = mean(similarity, na.rm = TRUE),
+    prop_similar = mean(similarity <= 2, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+```
+
+Construct the analysis dataset
+
+```{r}
+users_base <- Data_clean %>%
+  select(
+    resp_id,
+    year,
+    country,
+    age_group,
+    gender,
+    engNat,
+    screen
+  )
+
+Data_RR1 <- user_universe_summary %>%
+  left_join(users_base, by = "resp_id") %>%
+  rename(universe_selected = universe)
+
+```
+
+Restrict to top 50 universes and classify genre
+
+```{r}
+# Identify the 50 most frequently rated universes
+top_50_list <- Data_RR1 %>%
+  count(universe_selected, sort = TRUE) %>%
+  slice_head(n = 50) %>%
+  pull(universe_selected)
+
+Data_RR1 <- Data_RR1 %>%
+  filter(universe_selected %in% top_50_list)
+
+```
+
+Map Realist vs Fantastical universes
+
+```{r}
+realist_universes <- c(
+  "S", "SHL", "FR", "B99", "T7S", "MF", "HIMYM", "NG", "PR",
+  "TO", "GA", "ONB", "CM", "GILG", "GLEE", "MG", "CAS",
+  "LS", "PC", "PP", "T", "RD", "RAT"
+)
+
+fantastical_universes <- c(
+  "HP", "MCU", "ALA", "GOT", "ST", "HG", "UA", "XM", "LOTR",
+  "SW", "SL", "LU", "DN", "SK", "SBSP", "FUTR", "FN",
+  "TS", "F", "BATB", "WO", "GP", "BOBB", "AL"
+)
+
+genre_map <- tibble(
+  universe_selected = c(realist_universes, fantastical_universes),
+  universe_genre = c(
+    rep("Realist", length(realist_universes)),
+    rep("Fantastical", length(fantastical_universes))
+  )
+)
+
+Data_RR1 <- Data_RR1 %>%
+  left_join(genre_map, by = "universe_selected") %>%
+  # Keep only universes with an explicit genre classification
+  filter(universe_genre %in% c("Realist", "Fantastical")) %>%
+  mutate(universe_genre = factor(universe_genre))
+
+```
+
+After data cleaning and restructuring, the analysis dataset is organized at the respondent–universe level. Each observation corresponds to a unique respondent–fictional universe pair and includes summary measures of identification within that universe, notably the respondent’s mean similarity score across all rated characters and the number of character ratings contributing to that mean. Respondent-level demographic variables (year, country, age group, gender, native language, screen type) are merged onto these summaries, and each universe is classified as either Realist or Fantastical. This structure reduces the nested character-level data to an analytically tractable unit that aligns with the hypotheses, allowing comparisons of perceived similarity across genres while accounting for repeated character ratings within the same fictional universe.
+
+## **Descriptive statistics:**
+
+```{r}
+view(Data_RR1)
+str(Data_RR1)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+```
+
+```{r}
+# Create a descriptive dataset at the respondent–universe level
+# This ensures that descriptives match the unit used in hypothesis testing
+desc_RR1 <- Data_RR1 %>%
+  distinct(
+    resp_id,
+    universe_selected,
+    universe_genre,
+    gender,
+    age_group,
+    engNat,
+    screen,
+    n_ratings,
+    mean_similarity
+  )
+
+```
+
+```{r}
+# Summarize key characteristics of the analysis sample
+# n_obs: number of respondent–universe observations
+# n_resp: number of unique respondents
+# n_universes: number of distinct fictional universes
+# mean_similarity and sd_similarity: distribution of the outcome variable
+# mean_n_ratings: average number of character ratings per universe
+desc_RR1 %>%
+  summarise(
+    n_obs = n(),
+    n_resp = n_distinct(resp_id),
+    n_universes = n_distinct(universe_selected),
+    mean_similarity = mean(mean_similarity, na.rm = TRUE),
+    sd_similarity = sd(mean_similarity, na.rm = TRUE),
+    mean_n_ratings = mean(n_ratings, na.rm = TRUE)
+  ) %>%
+  kable(
+    digits = 2,
+    caption = "Summary of the analysis sample (respondent–universe level)"
+  )
+
+```
+
+```{r}
+# Examine the distribution of observations across genre categories
+# This addresses balance between Realist and Fantastical universes
+desc_RR1 %>%
+  count(universe_genre) %>%
+  mutate(prop = n / sum(n)) %>%
+  kable(
+    digits = 3,
+    caption = "Distribution of observations by universe genre"
+  )
+
+```
+
+```{r}
+# Distribution of observations by gender
+desc_RR1 %>%
+  count(gender) %>%
+  mutate(prop = n / sum(n)) %>%
+  kable(
+    digits = 3,
+    caption = "Distribution of observations by gender"
+  )
+
+# Distribution of observations by age group
+desc_RR1 %>%
+  count(age_group) %>%
+  mutate(prop = n / sum(n)) %>%
+  kable(
+    digits = 3,
+    caption = "Distribution of observations by age group"
+  )
+
+```
+
+```{r}
+# Descriptive stratification by genre and gender
+# This does not test H2, but illustrates potential interaction patterns
+desc_RR1 %>%
+  group_by(universe_genre, gender) %>%
+  summarise(
+    mean_similarity = mean(mean_similarity, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  kable(
+    digits = 2,
+    caption = "Mean similarity by genre and gender (descriptive preview)"
+  )
+
+```
+
+```{r}
+# Descriptive stratification by genre and age group
+# This provides intuition for the genre × age interaction tested later
+desc_RR1 %>%
+  group_by(universe_genre, age_group) %>%
+  summarise(
+    mean_similarity = mean(mean_similarity, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  kable(
+    digits = 2,
+    caption = "Mean similarity by genre and age group (descriptive preview)"
+  )
+
+```
+
+```{r}
+# Visualize the distribution of mean similarity scores
+# Distribution of the outcome variable (mean_similarity)
+ggplot(desc_RR1, aes(x = mean_similarity)) +
+  geom_histogram(aes(fill = universe_genre), bins = 40, alpha = 0.7) +
+  theme_minimal() +
+  labs(
+    title = "Distribution of mean perceived similarity",
+    x = "Mean similarity (respondent–universe)",
+    y = "Count",
+    fill = "Universe genre"
+  )
+
+```
+
+```{r}
+# Compare similarity distributions across genres
+# Genre distribution (how balanced is the dataset across genres?)
+ggplot(desc_RR1, aes(x = universe_genre, fill = universe_genre)) +
+  geom_bar(alpha = 0.85) +
+  theme_minimal() +
+  labs(
+    title = "Distribution of observations by universe genre",
+    x = NULL,
+    y = "Count",
+    fill = "Universe genre"
+  ) +
+  guides(fill = "none")
+
+```
+
+The distribution of mean perceived similarity is broadly similar across realist and fantastical universes, with substantial overlap and a concentration of observations around mid-to-high similarity values (≈3–5). Realist universes show a slightly higher density in the upper range, which is descriptively consistent with H1, though the difference appears modest and requires inferential testing.
+
+```{r}
+# H1 descriptive comparison: genre differences in mean similarity
+ggplot(desc_RR1, aes(x = universe_genre, y = mean_similarity, fill = universe_genre)) +
+  geom_violin(trim = TRUE, alpha = 0.6) +
+  geom_boxplot(width = 0.15, outlier.alpha = 0.15) +
+  theme_minimal() +
+  labs(
+    title = "Mean similarity by universe genre",
+    x = NULL,
+    y = "Mean similarity",
+    fill = "Universe genre"
+  ) +
+  guides(fill = "none")
+
+```
+
+Perceived similarity distributions largely overlap across genres, but the median and central density are slightly higher for Realist universes than for Fantastical ones. This descriptive pattern is consistent with H1, suggesting a modest realism advantage in perceived similarity.
+
+```{r}
+# Descriptive preview for H2: genre × gender
+desc_gender <- desc_RR1 %>%
+  group_by(universe_genre, gender) %>%
+  summarise(
+    mean_similarity = mean(mean_similarity, na.rm = TRUE),
+    se = sd(mean_similarity, na.rm = TRUE) / sqrt(n()),
+    n = n(),
+    .groups = "drop"
+  )
+
+ggplot(desc_gender, aes(x = gender, y = mean_similarity, color = universe_genre, group = universe_genre)) +
+  geom_point(size = 2) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_similarity - 1.96 * se, ymax = mean_similarity + 1.96 * se),
+                width = 0.1, alpha = 0.6) +
+  theme_minimal() +
+  labs(
+    title = "Mean similarity by genre and gender (descriptive preview)",
+    x = "Gender",
+    y = "Mean similarity",
+    color = "Universe genre"
+  )
+
+```
+
+Across all gender categories, perceived similarity is consistently higher for Realist than Fantastical universes. The gap between genres appears largest for gender category 1, indicating a potential moderation effect of gender that aligns with H2 and motivates formal interaction testing.
+
+```{r}
+# Descriptive preview for H3: genre × age group
+desc_age <- desc_RR1 %>%
+  group_by(universe_genre, age_group) %>%
+  summarise(
+    mean_similarity = mean(mean_similarity, na.rm = TRUE),
+    se = sd(mean_similarity, na.rm = TRUE) / sqrt(n()),
+    n = n(),
+    .groups = "drop"
+  )
+
+ggplot(desc_age, aes(x = age_group, y = mean_similarity, color = universe_genre, group = universe_genre)) +
+  geom_point(size = 2) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_similarity - 1.96 * se, ymax = mean_similarity + 1.96 * se),
+                width = 0.1, alpha = 0.6) +
+  theme_minimal() +
+  labs(
+    title = "Mean similarity by genre and age group (descriptive preview)",
+    x = "Age group",
+    y = "Mean similarity",
+    color = "Universe genre"
+  )
+
+```
+
+Mean similarity increases with age in both genres, but the increase is steeper for Realist universes, particularly in Group 3 (older participants). This widening genre gap across age groups is descriptively consistent with H3, suggesting that realism may matter more for older respondents.
+
+Overall Interpretation of descriptive statistics:
+
+The analysis sample consists of 479,693 respondent–universe observations, drawn from approximately 297,900 unique respondents and 50 fictional universes retained for analysis. At this level of aggregation, the average perceived similarity score is 3.95 (SD ≈ 0.52) on a six-point scale, indicating moderate to moderately high identification with fictional characters. Respondents rated, on average, 4.7 characters per universe, suggesting that universe-level similarity measures are based on multiple character evaluations rather than single observations.
+
+Observations are relatively well distributed across genre categories, with Realist universes accounting for a slight majority of respondent–universe observations (≈52%), and Fantastical universes representing the remaining ≈48%. This balance limits concerns about genre-driven sample imbalance in subsequent comparisons.
+
+In terms of individual characteristics, gender categories are unevenly represented but all contribute substantial numbers of observations. Age groups show a broadly comparable distribution, with each group accounting for a meaningful share of the sample, allowing for descriptive and inferential comparisons across age categories.
+
+Stratified descriptives indicate that mean similarity is consistently higher for Realist universes than for Fantastical universes across all subgroups, though differences are small in absolute magnitude. By gender, mean similarity in Realist universes ranges from approximately 3.93 to 4.01, compared to 3.84 to 3.88 in Fantastical universes, with the largest genre gap observed for gender category 1. By age group, mean similarity increases from ≈3.95 (Group 1) to ≈4.03 (Group 3) in Realist universes, while Fantastical universes show a more modest increase from ≈3.85 to ≈3.91.
+
+The descriptive statistics suggest a small but systematic realism advantage in perceived similarity, alongside potential moderation by gender and age, motivating the formal tests of H1–H3 in the inferential analysis that follows.
+
+## Inferential statistics
+
+```{r}
+# Save cleaned dataset to avoid re-running full preprocessing pipeline
+saveRDS(Data_RR1, "Data_RR1.rds")
+
+# Reload dataset for inferential analysis
+Data_RR1 <- readRDS("Data_RR1.rds")
+
+```
+
+```{r}
+# Restrict to classified universes and keep one observation per respondent–universe
+Analysis_RR1 <- Data_RR1 %>%
+  filter(!is.na(universe_genre), universe_genre != "Other") %>%
+  distinct(
+    resp_id,
+    universe_selected,
+    universe_genre,
+    gender,
+    age_group,
+    mean_similarity
+  ) %>%
+  filter(!is.na(mean_similarity))
+
+# Ensure categorical predictors are properly treated as factors
+Analysis_RR1 <- Analysis_RR1 %>%
+  mutate(
+    universe_genre = factor(universe_genre),
+    gender = factor(gender),
+    age_group = factor(age_group)
+  )
+
+```
+
+H1: Main effect of genre
+
+```{r}
+# H1 model: effect of genre on perceived similarity
+m_h1 <- lm(mean_similarity ~ universe_genre, data = Analysis_RR1)
+
+```
+
+Assumption checks : Normality of residuals
+
+```{r}
+# Histogram of residuals
+hist(residuals(m_h1),
+     breaks = 30,
+     main = "Residuals histogram (H1)",
+     xlab = "Residuals")
+
+# Q-Q plot
+qqnorm(residuals(m_h1))
+qqline(residuals(m_h1))
+
+```
+
+The distribution of residuals is approximately symmetric and centered around zero, which is consistent with the assumptions of a General Linear Model.
+
+Homoscedasticity
+
+```{r}
+# Residuals vs fitted values
+plot(fitted(m_h1), residuals(m_h1),
+     xlab = "Fitted values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted (H1)")
+abline(h = 0, lty = 2)
+
+```
+
+Because universe_genre is binary, only two fitted means are produced. Residual dispersion appears comparable across both fitted values.
+
+```{r}
+summary(m_h1)
+```
+
+Interpretation:
+
+A linear model was estimated to assess the effect of fictional genre on perceived similarity (H1). Results indicate a statistically significant association between genre and mean similarity. Specifically, characters from realist universes are rated, on average, 0.093 points higher in perceived similarity than characters from fantastical universes (β = 0.093, p \< .001). The intercept indicates that the average perceived similarity in fantastical universes is 3.87 on the 1–6 scale.
+
+Despite strong statistical significance, the substantive magnitude of the effect is small. Genre explains approximately 0.22% of the variance in perceived similarity (R² = .002), indicating that while realism is systematically associated with higher perceived similarity, it accounts for only a limited portion of individual variation. Overall, these results provide weak but consistent support for H1, suggesting a modest realism advantage in perceived similarity.
+
+Visualization of H1
+
+```{r}
+ggplot(Analysis_RR1,
+       aes(x = universe_genre,
+           y = mean_similarity,
+           fill = universe_genre)) +
+  geom_violin(alpha = 0.5, trim = TRUE) +
+  geom_boxplot(width = 0.15, alpha = 0.7, outlier.alpha = 0.1) +
+  scale_fill_manual(values = c("Fantastical" = "#E76F51",
+                               "Realist" = "#2A9D8F")) +
+  theme_minimal() +
+  labs(
+    title = "Perceived similarity by fictional genre",
+    x = NULL,
+    y = "Mean similarity"
+  ) +
+  guides(fill = "none")
+
+```
+
+H2: Genre × Gender interaction
+
+```{r}
+# H2 model: interaction between genre and gender
+m_h2 <- lm(mean_similarity ~ universe_genre * gender,
+           data = Analysis_RR1)
+
+```
+
+Assumption checks:
+
+```{r}
+# Residual diagnostics for H2 
+hist(residuals(m_h2), breaks = 30) 
+qqnorm(residuals(m_h2)) 
+qqline(residuals(m_h2))  
+
+plot(fitted(m_h2), residuals(m_h2)) 
+abline(h = 0, lty = 2)
+```
+
+```{r}
+summary(m_h2)
+```
+
+While characters from realist universes are rated as more similar across all gender groups (β = 0.106, p \< .001), the realism advantage is significantly smaller for gender category 2 relative to the reference group (interaction β = −0.016, p = .018). The interaction for gender category 3 is negative but not statistically significant. These results indicate limited support for H2: genre effects vary modestly by gender, but differences in the realism advantage across gender groups are small in magnitude. The model explains approximately 0.24% of the variance in perceived similarity (R² = .0024).
+
+Visualization of H2
+
+```{r}
+# Predicted values for interaction plot
+library(emmeans)
+
+emm_h2 <- emmeans(m_h2, ~ universe_genre * gender)
+emm_df_h2 <- as.data.frame(emm_h2)
+
+ggplot(emm_df_h2,
+       aes(x = gender,
+           y = emmean,
+           color = universe_genre,
+           group = universe_genre)) +
+  geom_point(size = 2.5) +
+  geom_line(size = 1) +
+  geom_errorbar(aes(ymin = emmean - SE * 1.96,
+                    ymax = emmean + SE * 1.96),
+                width = 0.1) +
+  scale_color_manual(values = c("Fantastical" = "#E76F51",
+                                "Realist" = "#2A9D8F")) +
+  theme_minimal() +
+  labs(
+    title = "Genre × Gender interaction",
+    x = "Gender",
+    y = "Predicted mean similarity",
+    color = "Universe genre"
+  )
+
+```
+
+H3: Genre × Age interaction
+
+```{r}
+# H3 model: interaction between genre and age group
+m_h3 <- lm(mean_similarity ~ universe_genre * age_group,
+           data = Analysis_RR1)
+```
+
+Assumptions:
+
+```{r}
+hist(residuals(m_h3), breaks = 30)
+qqnorm(residuals(m_h3))
+qqline(residuals(m_h3))
+
+plot(fitted(m_h3), residuals(m_h3))
+abline(h = 0, lty = 2)
+```
+
+```{r}
+summary(m_h3)
+```
+
+The interaction between fictional genre and age group is statistically significant. Perceived similarity increases with age in both genres, with older respondents reporting higher similarity overall (Group 3 main effect β = 0.060, p \< .001). The realism advantage is reduced for Group 2 (interaction β = −0.030, p \< .001) but significantly larger for Group 3 (interaction β = 0.025, p = .004). This provides support for H3, indicating that the difference in perceived similarity between realist and fantastical universes increases among older respondents. As in previous models, effect sizes remain small, with the model explaining approximately 0.29% of the variance in perceived similarity (R² = .0029).
+
+Visualization of H3:
+
+```{r}
+emm_h3 <- emmeans(m_h3, ~ universe_genre * age_group)
+emm_df_h3 <- as.data.frame(emm_h3)
+
+ggplot(emm_df_h3,
+       aes(x = age_group,
+           y = emmean,
+           color = universe_genre,
+           group = universe_genre)) +
+  geom_point(size = 2.5) +
+  geom_line(size = 1) +
+  geom_errorbar(aes(ymin = emmean - SE * 1.96,
+                    ymax = emmean + SE * 1.96),
+                width = 0.1) +
+  scale_color_manual(values = c("Fantastical" = "#E76F51",
+                                "Realist" = "#2A9D8F")) +
+  theme_minimal() +
+  labs(
+    title = "Genre × Age interaction",
+    x = "Age group",
+    y = "Predicted mean similarity",
+    color = "Universe genre"
+  )
+
+```
+
+## Discussion
+
+This analysis tested whether perceived similarity to fictional characters differs between realist and fantastical universes, and whether this relationship is moderated by gender and age. Across all models, characters from realist universes were rated as slightly more similar to respondents than characters from fantastical universes. Although this effect is highly statistically significant, its magnitude is small, indicating that narrative realism explains only a limited share of variation in perceived similarity.
+
+Results for H1 show a consistent realism advantage of approximately 0.09 points on the similarity scale. The associated R² values remain below 0.3%, suggesting that genre contributes marginally to identification outcomes. Realism therefore appears to be a systematic but weak predictor of perceived similarity.
+
+For H2, the interaction between genre and gender is statistically significant but small. The realism advantage is present across all gender categories and is only modestly reduced for some groups. This indicates that gender differences in perceived similarity are primarily additive rather than strongly interactive with genre, providing limited support for gender-based moderation.
+
+For H3, age moderates the relationship between genre and perceived similarity more clearly. Mean similarity increases with age across both genres, and the realism advantage is larger among older respondents. Although effect sizes remain small, this pattern is consistent with age-related differences in narrative engagement and supports the presence of a genre-by-age interaction.
+
+To sum up, the findings indicate that fictional genre has a statistically reliable but substantively modest association with perceived similarity. Moderation by age is more pronounced than moderation by gender, but neither interaction substantially alters the limited explanatory power of genre. Identification with fictional characters is therefore only weakly structured by narrative realism at the aggregate level.
+
+## References:
+
+Märtens, M., & Reinecke, L. (2021). Personality and preferences for film genres: A large-scale survey study. Personality and Individual Differences, 179, 110927.
+
+Redondo, I., & Holbrook, M. B. (2010). Modeling the appeal of movie features to demographic segments. Journal of Cultural Economics, 34(4), 299–315.
+
+Mares, M.-L., & Sun, Y. (2010). The multiple meanings of age in television viewing. Human Communication Research, 36(3), 372–401.
+
+Mares, M.-L., Cantor, J., & Steinbach, J. B. (2016). Age-related differences in interest in television narratives. Journal of Broadcasting & Electronic Media, 60(1), 1–18.
