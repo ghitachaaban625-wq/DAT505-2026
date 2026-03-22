@@ -1,0 +1,141 @@
+---
+title: "Bootstrapping hw"
+format: 
+  html:
+    self_contained: true
+    toc: true
+    embed-resources: true
+editor: visual
+author: Chita Chaaban
+date: Winter 2026
+---
+
+# **Workshop Week 10**
+
+## **Section 1: Back to Linear and Logistic Models**
+
+Loading the data:
+
+```{r}
+data <- read.csv("diabetes_subsample.csv")
+```
+
+QUESTION 1:
+
+check_model() is a function from the performance package that quickly checks whether a regression model is a good fit for the data. It creates a set of diagnostic plots (like linearity, residuals, outliers, etc.) in one step, instead of running many separate tests.
+
+QUESTION 2: Linear model
+
+```{r}
+library(performance)
+library(easystats)
+model_bmi <- lm(blood_glucose_level ~ bmi, data = data)
+
+summary(model_bmi)
+
+check_model(model_bmi)
+
+```
+
+Interpretationns:
+
+**Posterior Predictive Check:** The predicted distribution matches closely the observed data, indicating that the model captures the overall shape of blood glucose levels well.
+
+**Linearity:** The residuals follow a somewhat flat pattern, suggesting no strong violation of the linearity assumption, although the narrow spread reflects a weak relationship.
+
+**Homogeneity of Variance:** The residuals appear evenly distributed across fitted values, indicating no clear heteroskedasticity.
+
+**Influential Observations:** Most points lie within the contour lines, showing that no individual observations are exerting strong influence on the model.
+
+**Normality of Residuals:** The residuals align closely with the reference line, suggesting approximate normality.
+
+General interpretation: The model satisfies the main assumptions, but the very limited variation in fitted values indicates that BMI has little explanatory power for blood glucose, making the model statistically acceptable but not very informative.
+
+## **Section 2: Logistic regression**
+
+**QUESTION 3:**
+
+```{r}
+model_log <- glm(diabetes ~ bmi + age + gender,
+                 family = binomial,
+                 data = data)
+
+summary(model_log)
+```
+
+The intercept is large and negative (−7.63, p \< 0.001), indicating that the baseline probability of diabetes is extremely low for the reference group (female, with BMI and age at zero), though this has little substantive meaning.
+
+BMI has a positive and significant effect (*B* = 0.0816, p \< 0.001), meaning that each one-unit increase in BMI increases the log-odds of diabetes; in odds terms, this corresponds to about an 8.5% increase in odds (exp(0.0816) ≈ 1.085). Age also has a positive and highly significant effect (*B* = 0.0520, p \< 0.001), implying that each additional year increases the odds of diabetes by about 5.3% (exp(0.0520) ≈ 1.053).
+
+Gender shows that males have higher odds of diabetes compared to females (*B* = 0.496, p = 0.035), corresponding to about 64% higher odds (exp(0.496) ≈ 1.64). The “other” gender category is not significant (*B*= −11.02, p = 0.984), suggesting no reliable effect, likely due to very few observations in that group. In conclusion the model shows that BMI and age are strong predictors of diabetes, and males face a higher risk compared to females.
+
+QUESTION 4:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+check_model(model_log)
+```
+
+Interpretations:
+
+**- Posterior Predictive Check (Model fit):** The predicted values overlap closely with the observed data, indicating that the logistic model’s structure is appropriate and reproduces the distribution of diabetes in the sample well.
+
+**- Binned Residuals (Linearity of the logit):** Most points fall within the gray error bounds without forming a clear curve or U-shape, suggesting that the relationship between the predictors and the log-odds of diabetes is adequately linear.
+
+**- Collinearity (No multicollinearity):** All VIF values are low and remain below critical thresholds, indicating that the predictors are not highly correlated and each contributes distinct information to the model.
+
+**- Influential Observations (Outliers):** The observations are largely within the contour lines, showing that no single data point is exerting disproportionate influence on the model estimates.
+
+**- Distribution of Quantile Residuals (The overall fit):** The residuals align closely with the reference line, indicating that the model fits the data well and that its distributional assumptions are reasonable.
+
+**The Conclusion:**
+
+The model satisfies the key assumptions of logistic regression: the logit is approximately linear, the model fits the data distribution well, there is no multicollinearity, and no influential outliers. Therefore, the model provides a reliable representation of the relationship between BMI, age, gender, and diabetes.
+
+**QUESTION 5**
+
+1.  Linear Probability Model (LPM)
+
+```{r}
+# We run a linear regression on a binary outcome (diabetes = 0/1)
+# This is the Linear Probability Model (LPM)
+
+model_lpm <- lm(diabetes ~ bmi + age + gender, data = data)
+
+# Display results
+summary(model_lpm)
+```
+
+The intercept is negative and significant (−0.193, p \< 0.001), indicating that the baseline probability of diabetes for the reference group (female, with BMI and age equal to zero) is very low, though this value has limited actual substantive meaning. BMI has a positive and significant effect (*B* = 0.0054, p \< 0.001), meaning that each one-unit increase in BMI increases the probability of diabetes by about 0.54 percentage points.
+
+Age is also positive and highly significant (*B* = 0.0028, p \< 0.001), implying that each additional year increases the probability of diabetes by about 0.28 percentage points. As for Gender, it shows that males have a higher probability of diabetes compared to females (*B*= 0.0380, p = 0.031), corresponding to an increase of about 3.8 percentage points. In conclusion, BMI and age have small but significant effects on the probability of diabetes, and males face a slightly higher probability compared to females, though the model explains only a limited share of variation (R² ≈ 0.08).
+
+2.  Visualization of the model
+
+```{r}
+library(ggplot2)
+
+# Plot of the relationship between BMI and diabetes using a linear model
+ggplot(data, aes(x = bmi, y = diabetes)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  labs(title = "Linear Probability Model",
+       x = "BMI",
+       y = "Probability of diabetes")
+```
+
+The plot shows a positive linear relationship between BMI and the probability of diabetes, with the predicted probability increasing steadily as BMI rises. However, since the regression line extends below 0 for low BMI values and could eventually exceed 1 for high values, the Linear Probability Model can produce unrealistic probabilities and does not fully respect the bounded nature of the outcome.
+
+3.  Average Marginal Effects (AME)
+
+```{r}
+# Load package to compute marginal effects
+library(marginaleffects)
+
+# Compute average marginal effects from logistic model
+ame <- avg_slopes(model_log)
+
+# Display results
+ame
+```
