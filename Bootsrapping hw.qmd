@@ -139,3 +139,27 @@ ame <- avg_slopes(model_log)
 # Display results
 ame
 ```
+
+The Average Marginal Effects show that age has a positive and significant effect (AME = 0.00377, p \< 0.001), meaning that each additional year increases the probability of diabetes by about 0.38 percentage points on aver
+
+age. BMI also has a positive and significant effect (AME = 0.00592, p \< 0.001). A one-unit increase in BMI is associated with an increase of about 0.59 percentage points in the probability of diabetes. For gender, males have a higher probability of diabetes than females (AME = 0.0367, p = 0.038), corresponding to an increase of about 3.67 percentage points. In contrast, individuals in the “Other” category have a lower probability than females (AME = -0.0748, p \< 0.001), with a decrease of about 7.48 percentage points. Age and BMI have small positive effects, while gender differences are larger in magnitude.
+
+**QUESTION 6:**
+
+1.  
+
+```{r}
+library(ggplot2)
+
+# 1. The Linear Approach (Straight line)
+p1 <- ggplot(data, aes(x = bmi, y = diabetes)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm", color = "blue") +
+  labs(title = "Linear Probability Model", subtitle = "A straight line for a binary outcome")
+
+# 2. The Logistic Approach (S-Curve)
+p2 <- ggplot(data, aes(x = bmi, y = diabetes)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), color = "red") +
+  labs(title = "Logistic Model", subtitle = "The S-curve (sigmoïd)")
+```
