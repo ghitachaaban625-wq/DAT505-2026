@@ -162,4 +162,78 @@ p2 <- ggplot(data, aes(x = bmi, y = diabetes)) +
   geom_point(alpha = 0.2) +
   geom_smooth(method = "glm", method.args = list(family = "binomial"), color = "red") +
   labs(title = "Logistic Model", subtitle = "The S-curve (sigmoïd)")
+
+p1
+p2
 ```
+
+The LPM graph shows a positive relationship between BMI and diabetes. As BMI increases, the predicted probability increases in a straight line. However, the line goes slightly below 0 at low BMI values, which is not realistic since probabilities cannot be negative. The relationship is simple but not fully appropriate for a binary outcome.
+
+As for the mogistic model graph, it also shows a positive relationship between BMI and diabetes, but the shape is curved. The probability increases slowly at low BMI, then faster in the middle range, and levels off at higher BMI. The predictions stay between 0 and 1, which makes this model more realistic for probabilities.
+
+2.  
+
+```{r}
+library(marginaleffects)
+# Visualizing the effect of BMI while "controlling" for Age and Gender
+#Linear model:
+model_lin <- lm(diabetes ~ bmi + age + gender, data = data)
+plot_predictions(model_lin, condition = "bmi") +
+  ylim(0, 1) +
+  labs(
+    title = "Adjusted Predictions of Diabetes",
+    subtitle = "Holding Age and Gender at their mean/mode",
+    y = "Predicted Probability of Diabetes",
+    x = "BMI"
+  )
+
+#Logistic:
+model_log <- glm(diabetes ~ bmi + age + gender, family = binomial, data = data)
+plot_predictions(model_log, condition = "bmi") +
+  ylim(0, 1) +
+  labs(
+    title = "Adjusted Predictions of Diabetes",
+    subtitle = "Holding Age and Gender at their mean/mode",
+    y = "Predicted Probability of Diabetes",
+    x = "BMI"
+  )
+```
+
+The Adjusted Linear Model graph shows a steady increase in the probability of diabetes as BMI increases. The relationship is linear, with the probability rising gradually from very low levels to around 0.25–0.30 at higher BMI values. The effect of BMI is constant across the range.
+
+The Adjusted Logistic Model graph on the other hand shows a curved relationship. The probability increases slowly at low BMI, then more sharply after around BMI 40, and reaches much higher values at the upper end. The increase is not constant and becomes stronger at higher BMI levels.
+
+Both models show that higher BMI is associated with higher probability of diabetes. However, the logistic model captures the stronger increase at higher BMI, while the linear model underestimates this change.
+
+**QUESTION 7:**
+
+To communicate the results, I would avoid technical measures like odds ratios and instead use simple probability terms, such as percentage increases in risk. I would also use clear visualizations, especially a curved plot showing how the probability of diabetes increases with BMI, since it makes the relationship easier to understand.
+
+```{r}
+library(marginaleffects)
+
+model_log <- glm(diabetes ~ bmi + age + gender, 
+                 family = binomial, 
+                 data = data)
+
+plot_predictions(model_log, condition = "bmi") +
+  ylim(0, 1) +
+  labs(
+    title = "Probability of Diabetes by BMI",
+    subtitle = "Adjusted for age and gender",
+    y = "Predicted probability of diabetes",
+    x = "BMI"
+  )
+```
+
+I think it would be important to show adjusted results rather than raw relationships, so that the effect of BMI is presented while accounting for age and gender. This avoids misleading interpretations.
+
+I would tell people that BMI is a simple measure based on height and weight that helps indicate whether someone is in a healthy range. Generally, a BMI between about 18.5 and 24.9 is considered healthy, while higher values indicate overweight or obesity. I would explain that as BMI increases, the risk of diabetes also increases, and this risk rises more sharply at higher BMI levels.
+
+## **Section 2: Bootstrapping**
+
+8.  
+
+Bootstrapped confidence intervals are better when the data is limited or not well-behaved. For example, if the sample size is small or the data is skewed or has outliers, the usual methods that rely on assumptions might not be reliable. In those cases, bootstrapping is useful because it does not rely on strong assumptions about the distribution. Instead, it uses the data itself to estimate how much the results could vary.
+
+It is also more helpful when we want to understand uncertainty in a more realistic way. Rather than focusing on whether a result is “significant,” it shows a range of possible values, which makes it easier to understand how precise or uncertain the estimate is.
