@@ -20,19 +20,24 @@ Loading the data:
 data <- read.csv("diabetes_subsample.csv")
 ```
 
-QUESTION 1:
+**QUESTION 1:**
 
 check_model() is a function from the performance package that quickly checks whether a regression model is a good fit for the data. It creates a set of diagnostic plots (like linearity, residuals, outliers, etc.) in one step, instead of running many separate tests.
 
-QUESTION 2: Linear model
+**QUESTION 2: Linear model**
 
 ```{r}
+# Load packages for model diagnostics
 library(performance)
 library(easystats)
+
+# STEP 1: Fit a linear model predicting blood glucose from BMI
 model_bmi <- lm(blood_glucose_level ~ bmi, data = data)
 
+# STEP 2: Display model results
 summary(model_bmi)
 
+# STEP 3: Check model assumptions and diagnostics
 check_model(model_bmi)
 
 ```
@@ -56,10 +61,13 @@ General interpretation: The model satisfies the main assumptions, but the very l
 **QUESTION 3:**
 
 ```{r}
+# STEP 1: Fit a logistic regression model predicting diabetes
+# using BMI, age, and gender
 model_log <- glm(diabetes ~ bmi + age + gender,
                  family = binomial,
                  data = data)
 
+# STEP 2: Display model results
 summary(model_log)
 ```
 
@@ -72,8 +80,11 @@ Gender shows that males have higher odds of diabetes compared to females (*B* = 
 QUESTION 4:
 
 ```{r}
+# Setting figure size for better visualization
 #| fig-width: 12
 #| fig-height: 8
+
+# STEP 1: Check assumptions and diagnostics of the logistic model
 check_model(model_log)
 ```
 
@@ -210,12 +221,16 @@ Both models show that higher BMI is associated with higher probability of diabet
 To communicate the results, I would avoid technical measures like odds ratios and instead use simple probability terms, such as percentage increases in risk. I would also use clear visualizations, especially a curved plot showing how the probability of diabetes increases with BMI, since it makes the relationship easier to understand.
 
 ```{r}
+# Load package for marginal effects and predictions
 library(marginaleffects)
 
+# STEP 1: Fit logistic model (same as before)
 model_log <- glm(diabetes ~ bmi + age + gender, 
                  family = binomial, 
                  data = data)
 
+# STEP 2: Plot predicted probabilities of diabetes across BMI
+# while holding other variables constant
 plot_predictions(model_log, condition = "bmi") +
   ylim(0, 1) +
   labs(
@@ -232,8 +247,164 @@ I would tell people that BMI is a simple measure based on height and weight that
 
 ## **Section 2: Bootstrapping**
 
-8.  
+**QUESTION 8**
 
 Bootstrapped confidence intervals are better when the data is limited or not well-behaved. For example, if the sample size is small or the data is skewed or has outliers, the usual methods that rely on assumptions might not be reliable. In those cases, bootstrapping is useful because it does not rely on strong assumptions about the distribution. Instead, it uses the data itself to estimate how much the results could vary.
 
 It is also more helpful when we want to understand uncertainty in a more realistic way. Rather than focusing on whether a result is “significant,” it shows a range of possible values, which makes it easier to understand how precise or uncertain the estimate is.
+
+**QUESTION 9**
+
+```{r}
+hist(data$blood_glucose_level)
+```
+
+The distribution of blood glucose levels is right-skewed, with most observations concentrated around lower to moderate values and a few high values extending the tail to the right.
+
+```{r}
+library(tidyverse)
+
+# STEP 1: Create an empty "bucket" (vector) to hold our results
+# We will do this 500 times
+n_iterations <- 500
+glucose_estimates <- numeric(n_iterations)
+
+# STEP 2: The Loop (The "Manual" work)
+for (i in 1:n_iterations) {
+  
+  # A. Create a "Resample" (Pick rows at random with replacement)
+  boot_data <- data[sample(nrow(data), replace = TRUE), ]
+  
+  # B. Run the model on THIS specific simulated dataset
+  boot_model <- glm(diabetes ~ blood_glucose_level + age, 
+                    family = "binomial", data = boot_data)
+  
+  # C. Save the Glucose coefficient into our "bucket" at position i
+  glucose_estimates[i] <- coef(boot_model)["blood_glucose_level"]
+  
+  # For pedagogu: Print progress every 100 times so students see it working
+  if(i %% 100 == 0) print(paste("Simulation number", i, "complete!"))
+}
+
+# STEP 3: Turn the bucket into a table for plotting
+results_df <- data.frame(estimate = glucose_estimates)
+
+
+# STEP 4: Visualize the results
+# 1. First, get the "Original Result" from your main model
+model_glucose = glm(diabetes ~ blood_glucose_level + age, 
+                    family = "binomial", data = data)
+original_slope <- coef(model_glucose)["blood_glucose_level"]
+
+# 2. Plot the histogram
+ggplot(results_df, aes(x = estimate)) +
+  # The bars: represent the 500 "simulated" worlds
+  geom_histogram(fill = "firebrick", color = "white", bins = 30) +
+  # The line: represents the "original" result from our real data
+  geom_vline(xintercept = original_slope, 
+             color = "blue", 
+             linewidth = 1.5, 
+             linetype = "dashed") + 
+  
+  # Add a label to know what the blue line is
+  annotate("text", x = original_slope, y = 10, label = "Original Estimate", 
+           color = "blue", angle = 90, vjust = -0.5, fontface = "bold") +
+  
+  labs(title = "The Bootstrap Distribution",
+       subtitle = "The blue dashed line is our original model result",
+       x = "Effect size of Blood Glucose (Slope)",
+       y = "How many times it happened in 500 tries") +
+  theme_minimal()
+```
+
+We first create an empty vector called glucose_estimates that will store the coefficient of blood glucose, and we set it to run 500 times. Next, we run a loop from 1 to 500. In each iteration, we randomly resample the data with replacement, meaning some rows can appear multiple times and others not at all.
+
+On each of these new simulated datasets, I run the same logistic regression model predicting diabetes using blood glucose and age. Then, I extract the coefficient for blood glucose and store it in the vector. I also print a message every 100 iterations just to track progress. After the loop, I convert all the stored coefficients into a data frame so I can plot them. Then, I run the original model on the real data and extract the original blood glucose coefficient.
+
+Finally, I plot a histogram of all the bootstrapped estimates and add a vertical dashed blue line to show the original estimate.
+
+Interpretation of the graph: The graph shows the distribution of the blood glucose coefficient across 500 simulated samples. Most of the estimates are concentrated around the same value, and the original estimate lies near the center of this distribution. This means the result is stable and does not change much across different samples. The effect of blood glucose is consistently positive.
+
+**QUESTION 10:**
+
+-   Research question: Does smoking history affect the probability of diabetes?
+
+-   Hypothesis: Individuals with a history of smoking have a higher probability of diabetes compared to non-smokers.
+
+The Bootstrap loop:
+
+```{r}
+# Create a new variable: 1 = smoker, 0 = non-smoker
+data$smoker <- ifelse(data$smoking_history == "never", 0, 1)
+
+# Create an empty vector to store the smoking effect
+# We will repeat the process 500 times
+n_iterations <- 500
+smoking_estimates <- numeric(n_iterations)
+
+# Repeat the analysis 500 times
+for (i in 1:n_iterations) {
+  
+  # A. Create a resample (randomly pick rows with replacement)
+  boot_data <- data[sample(nrow(data), replace = TRUE), ]
+  
+  # B. Run the logistic regression on this resampled dataset
+  boot_model <- glm(diabetes ~ smoker + age + bmi, 
+                    family = "binomial", 
+                    data = boot_data)
+  
+  # C. Store the coefficient for smoker (compared to non-smoker)
+  smoking_estimates[i] <- coef(boot_model)["smoker"]
+  
+  # Print progress every 100 iterations
+  if(i %% 100 == 0) print(paste("Simulation number", i, "complete!"))
+}
+
+# Convert the stored coefficients into a data frame for plotting
+results_df <- data.frame(estimate = smoking_estimates)
+```
+
+The original estimate / Model:
+
+```{r}
+
+# Run the model on the original dataset
+model_smoking <- glm(diabetes ~ smoker + age + bmi, 
+                     family = "binomial", 
+                     data = data)
+
+# Extract the original coefficient
+original_slope <- coef(model_smoking)["smoker"]
+```
+
+**Visualization:**
+
+```{r}
+# Plot the distribution of the bootstrapped estimates
+ggplot(results_df, aes(x = estimate)) +
+  
+  # Histogram: shows variation across simulations
+  geom_histogram(fill = "pink", color = "white", bins = 30) +
+  
+  # Vertical dashed line: original estimate
+  geom_vline(xintercept = original_slope, 
+             color = "darkgreen", 
+             linewidth = 1.5, 
+             linetype = "dashed") +
+  
+  # Label for the original estimate
+  annotate("text", x = original_slope, y = 10, 
+           label = "Original Estimate", 
+           color = "darkgreen", angle = 90, vjust = -0.5, fontface = "bold") +
+  
+  labs(title = "Bootstrap Distribution of Smoking Effect",
+       subtitle = "Effect of being a smoker on diabetes",
+       x = "Effect size (coefficient)",
+       y = "How many times it appeared in 500 simulations") +
+  
+  theme_minimal()
+```
+
+The graph shows the distribution of the smoking effect across 500 simulated samples. The estimates are spread out and include both negative and positive values, with many of them close to zero. The original estimate is also close to zero and falls within this range. This suggests that the effect of being a smoker on diabetes is not consistent across samples and is relatively small. There is no clear evidence of a strong or stable effect.
+
+The results do not strongly support the hypothesis that smokers have a higher probability of diabetes.
