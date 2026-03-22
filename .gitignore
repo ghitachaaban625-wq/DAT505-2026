@@ -47,6 +47,9 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+<<<<<<< HEAD
 .Rproj.user
 .DS_Store
 .quarto
+=======
+>>>>>>> 91dd4583b2b928ff919106a3cf4236372be46bdb
