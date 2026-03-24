@@ -283,10 +283,3 @@ p3 = ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
 p3
 
 ```
-
-Inferential stats:
-
-```{r}
-# Model 1: Bivariate relationship
-model1 <- lm(climate_efficacy ~ econ_insecurity, data = data_clean)
-```
