@@ -10,80 +10,29 @@ author: Chita Chaaban
 date: Winter 2026
 ---
 
-## First Draft: 
+## First Draft:
 
 ### Introduction
 
-### w2eq15
+In this report we examine **how economic insecurity shapes individuals’ perceived ability to act on climate change**. Rather than analyzing environmental attitudes in isolation, we try to focus on how material conditions may constrain individual agency. The CRONOS3 Wave 2 dataset is suited for this question, as it combines environmental attitudes from the “Make it Green” module with measures of economic insecurity from the “Make it Equal” module, allowing both dimensions to be analyzed jointly.
 
-How likely unable to pay for household necessities next 12 months
+The main outcome variable is perceived climate efficacy, measured through respondents’ agreement with the statement that their own actions can help prevent worsening climate change (w2gq12), which could capture individual-level agency in the environmental domain. As an alternative measure, climate fatalism (w2gq8) captures the opposite perception, namely that it is too difficult for someone like oneself to contribute meaningfully.
 
-The next questions ask you to think about what might happen during the next 12 months.
+The main explanatory/ independent variable is economic insecurity, constructed as an index combining four items capturing the perceived likelihood of experiencing financial hardship in the next twelve months (w2eq15–w2eq18), including difficulties in meeting basic needs, affording unexpected expenses, or maintaining employment. We also include subjective income perception (hincfel) to capture current economic evaluation, complementing the forward-looking insecurity index.
 
-In the next 12 months, how likely is it that there will be periods when you are unable to pay for your basic household necessities?
+The main hypothesis is :
 
-| Value | Category          |
-|:------|:------------------|
-| 1     | Not at all likely |
-| 2     | Not very likely   |
-| 3     | Somewhat likely   |
-| 4     | Very likely       |
-| 5     | Extremely likely  |
-| 9     | No answer\*       |
+H1: Higher perceived economic insecurity is associated with lower climate self-efficacy and higher climate fatalism, even after controlling for climate concern.
 
-\*) Missing value
+The theoretical expectation is that economic insecurity reduces perceived agency: when individuals face uncertainty about their material conditions, their attention and resources are directed toward short-term constraints, which may limit their engagement with long-term collective issues such as climate change. To isolate this mechanism, the analysis controls for climate worry (w2gq1), ensuring that the estimated effect is not simply driven by differences in concern about climate change.
 
-### w2eq16
+### Data and Preparation
 
-How likely unable to afford a one-week holiday away from home next 12 months
+The analysis uses the CRONOS3 Wave 2 (edition 1.3) dataset, a cross-national European survey conducted in 2024 across eleven countries. The dataset includes detailed measures of environmental attitudes, economic insecurity, and socio-demographic characteristics. The data was first restricted to the variables relevant to the research question. All selected variables were converted to numeric format where necessary, and missing values were recoded according to the survey coding scheme (77, 88, 99 treated as missing).
 
-In the next 12 months, how likely is it that you will be unable to afford a one-week holiday away from home?
+An index of economic insecurity was then constructed by taking the average of four items capturing perceived risks of financial hardship (w2eq15–w2eq18), ignoring missing values. This index is meant to provide us with a continuous measure of perceived economic vulnerability, where higher values indicate greater insecurity. The main outcome variable, climate efficacy, was directly taken from, while climate fatalism was retained as an alternative outcome for robustness checks. Control variables were also defined at this stage. Climate worry was also included as a control to distinguish concern from perceived agency. Then, additional socio-demographic variables, including age, gender, education, and country, were included to account for potential confounding factors.
 
-| Value | Category          |
-|:------|:------------------|
-| 1     | Not at all likely |
-| 2     | Not very likely   |
-| 3     | Somewhat likely   |
-| 4     | Very likely       |
-| 5     | Extremely likely  |
-| 9     | No answer\*       |
-
-\*) Missing value
-
-### w2eq17
-
-How likely unable to pay for unexpected expenses next 12 months
-
-In the next 12 months, how likely is it that you will be unable to pay for unexpected expenses?
-
-| Value | Category          |
-|:------|:------------------|
-| 1     | Not at all likely |
-| 2     | Not very likely   |
-| 3     | Somewhat likely   |
-| 4     | Very likely       |
-| 5     | Extremely likely  |
-| 9     | No answer\*       |
-
-\*) Missing value
-
-### w2eq18
-
-How likely unemployed and not able to find job next 12 months
-
-In the next 12 months, how likely is it that you may become unemployed and not able to find a job within four weeks?
-
-| Value | Category                              |
-|:------|:--------------------------------------|
-| 1     | Not at all likely                     |
-| 2     | Not very likely                       |
-| 3     | Somewhat likely                       |
-| 4     | Very likely                           |
-| 5     | Extremely likely                      |
-| 6     | Never worked or currently not working |
-| 9     | No answer\*                           |
-
-\*) Missing value
+Finally, the dataset was reduced to a clean analytical sample by keeping only the variables of interest and removing observations with missing values on these variables. This ensures consistency across all models and avoids variations in sample size between specifications.
 
 ```{r}
 # Load packages
@@ -138,7 +87,8 @@ data <- data %>%
     
     # Clean factors
     gender = factor(gndr),
-    country = factor(cntry)
+    country = factor(cntry),
+    Income_perception = factor(hincfel)
   )
 
 # 4. Keep only relevant variables
@@ -147,7 +97,7 @@ data_clean <- data %>%
     climate_efficacy,
     climate_fatalism,
     econ_insecurity,
-    hincfel,
+    Income_perception,
     climate_worry,
     age,
     eduyrs,
@@ -171,12 +121,12 @@ Descriptive statistics
 # Create basic descriptive table
 desc_table <- data_clean %>%
   summarise(
-    climate_efficacy = mean(climate_efficacy, na.rm = TRUE),
-    econ_insecurity  = mean(econ_insecurity, na.rm = TRUE),
-    hincfel          = mean(hincfel, na.rm = TRUE),
-    climate_worry    = mean(climate_worry, na.rm = TRUE),
-    age              = mean(age, na.rm = TRUE),
-    eduyrs           = mean(eduyrs, na.rm = TRUE)
+    climate_efficacy  = mean(climate_efficacy, na.rm = TRUE),
+    econ_insecurity   = mean(econ_insecurity, na.rm = TRUE),
+    Income_perception = mean(Income_perception, na.rm = TRUE),
+    climate_worry     = mean(climate_worry, na.rm = TRUE),
+    age               = mean(age, na.rm = TRUE),
+    eduyrs            = mean(eduyrs, na.rm = TRUE)
   ) %>%
   pivot_longer(everything(), names_to = "Variable", values_to = "mean") %>%
   mutate(
@@ -190,43 +140,6 @@ desc_table <- data_clean %>%
     )
   )
 desc_table
-```
-
-```{r}
-library(knitr)
-library(kableExtra)
-
-# Clean + label table
-desc_table_clean <- desc_table %>%
-  mutate(
-    Variable = recode(Variable,
-      "climate_efficacy" = "Climate efficacy",
-      "econ_insecurity"  = "Economic insecurity",
-      "hincfel"          = "Income perception",
-      "climate_worry"    = "Climate worry",
-      "age"              = "Age",
-      "eduyrs"           = "Years of education",
-      "1"                = "Male",
-      "2"                = "Female"
-    )
-  ) %>%
-  # Order variables nicely
-  mutate(Variable = factor(Variable, levels = c(
-    "Climate efficacy",
-    "Economic insecurity",
-    "Income perception",
-    "Climate worry",
-    "Age",
-    "Years of education",
-    "Male",
-    "Female"
-  ))) %>%
-  arrange(Variable)
-
-# Display
-kable(desc_table_clean, digits = 2,
-      caption = "Descriptive Statistics (including demographics)") %>%
-  kable_styling(full_width = FALSE, position = "left")
 ```
 
 ```{r}
@@ -264,6 +177,14 @@ p_combined = (p1 | p2)
 p_combined
 ```
 
+Interpretation
+
+Climate efficacy appears moderately centered, with most respondents clustering around mid-to-high values, suggesting that individuals generally report some level of perceived agency in addressing climate change. The distribution is relatively balanced, though slightly concentrated around the middle of the scale.
+
+In contrast, economic insecurity is more skewed toward lower values, indicating that most respondents report relatively low to moderate levels of perceived financial risk, with fewer individuals experiencing high insecurity. The right tail suggests that a smaller group faces substantially higher levels of economic vulnerability.
+
+Taken together, this suggests that while perceived climate agency is relatively widespread, economic insecurity is more unevenly distributed across respondents. This is indicating that most respondents are at low to moderate levels in terms of economic insecurity.
+
 ```{r}
 # Scatter plot with linear trend
 p3 = ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
@@ -283,3 +204,83 @@ p3 = ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
 p3
 
 ```
+
+Interpretation:
+
+The scatter plot shows a weak positive relationship between economic insecurity and climate efficacy, as indicated by the upward-sloping regression line. This suggests that, at the bivariate level, higher economic insecurity is not associated with lower perceived agency, and if anything, the relationship appears slightly positive.
+
+However, the relationship is relatively flat and the data are widely dispersed, this means that substantial variation in climate efficacy at all levels of insecurity. This suggests that economic insecurity alone is not a strong predictor of perceived climate agency.
+
+In relation to the hypothesis, these descriptive results do not provide clear support for the expected negative relationship. Instead, they highlight the need to account for additional factors, particularly climate worry, to better isolate the effect of economic insecurity on perceived agency.
+
+### **Inferential stats:**
+
+Because the gender and income perception have 9 coded as NA, I changed it (probably should move it to the data cleaning section).
+
+```{r}
+data_clean <- data_clean %>%
+  mutate(
+    # Convert to numeric FIRST
+    gender = as.numeric(as.character(gender)),
+    Income_perception = as.numeric(as.character(Income_perception)),
+    
+    # Remove invalid codes
+    gender = na_if(gender, 9),
+    Income_perception = na_if(Income_perception, 9),
+    
+    # Convert to factor AFTER cleaning
+    gender = factor(gender),
+    Income_perception = factor(Income_perception)
+  ) %>%
+  drop_na(gender, Income_perception)
+```
+
+```{r}
+# Model 1: Bivariate relationship 
+model1 <- lm(climate_efficacy ~ econ_insecurity, data = data_clean)
+
+summary(model1)
+```
+
+In Model 1, the bivariate relationship between economic insecurity and climate efficacy is small and not statistically significant (*B* = 0.075, p = 0.304). This indicates that, on its own, economic insecurity is not associated with lower perceived climate agency, and the direction of the relationship is slightly positive rather than negative.
+
+```{r}
+# Model 2: Add climate worry (core control)
+model2 <- lm(climate_efficacy ~ econ_insecurity + climate_worry, data = data_clean)
+
+summary(model2)
+```
+
+In Model 2, after controlling for climate worry, the coefficient for economic insecurity remains positive and non-significant, while climate worry emerges as a strong and statistically significant predictor (*B*= 0.489, p \< 0.001). This suggests that perceived agency is more closely related to concern about climate change than to economic insecurity.
+
+```{r}
+# Model 3: Full model with controls
+model3 <- lm(climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+               age + eduyrs + gender + country,
+             data = data_clean)
+summary(model3)
+```
+
+In the full model (Model 3), the effect of economic insecurity remains small and non-significant (*B* = 0.075, p = 0.304), providing no support for the hypothesis that higher insecurity reduces perceived climate efficacy. In contrast, climate worry continues to have a strong positive association with efficacy, and age shows a small but significant negative effect (*B* = -0.007, p \< 0.01), indicating that older individuals report slightly lower perceived agency. Gender is also significant, with women reporting higher climate efficacy than men (*B* = 0.478, p \< 0.01).
+
+Overall, these results do not support the main hypothesis. Economic insecurity does not appear to reduce perceived climate agency, and the expected negative relationship is not observed. Instead, perceived efficacy is more strongly explained by climate concern than by economic conditions.
+
+### Robustness check:
+
+```{r}
+model4 <- lm(climate_fatalism ~ econ_insecurity + climate_worry +
+               age + eduyrs + gender + country,
+             data = data_clean)
+summary(model4)
+
+ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm")
+
+```
+
+The robustness check confirms the main findings. The relationship between economic insecurity and climate efficacy remains weak and slightly positive, as indicated by the upward-sloping regression line. This is consistent with the regression results, where the coefficient for economic insecurity was small and not statistically significant (*B* = 0.075, p = 0.304).
+
+The dispersion of the data remains high across all levels of insecurity, suggesting that individuals with both low and high economic insecurity report similar levels of climate efficacy. This reinforces the conclusion that economic insecurity is not a strong predictor of perceived climate agency.
+
+The robustness check supports the initial results: the expected negative relationship is not observed, and the findings remain stable across specifications.
