@@ -1,0 +1,292 @@
+---
+title: "RR2 first draft"
+format: 
+  html:
+    self_contained: true
+    toc: true
+    embed-resources: true
+editor: visual
+author: Chita Chaaban
+date: Winter 2026
+---
+
+## First Draft: 
+
+### Introduction
+
+### w2eq15
+
+How likely unable to pay for household necessities next 12 months
+
+The next questions ask you to think about what might happen during the next 12 months.
+
+In the next 12 months, how likely is it that there will be periods when you are unable to pay for your basic household necessities?
+
+| Value | Category          |
+|:------|:------------------|
+| 1     | Not at all likely |
+| 2     | Not very likely   |
+| 3     | Somewhat likely   |
+| 4     | Very likely       |
+| 5     | Extremely likely  |
+| 9     | No answer\*       |
+
+\*) Missing value
+
+### w2eq16
+
+How likely unable to afford a one-week holiday away from home next 12 months
+
+In the next 12 months, how likely is it that you will be unable to afford a one-week holiday away from home?
+
+| Value | Category          |
+|:------|:------------------|
+| 1     | Not at all likely |
+| 2     | Not very likely   |
+| 3     | Somewhat likely   |
+| 4     | Very likely       |
+| 5     | Extremely likely  |
+| 9     | No answer\*       |
+
+\*) Missing value
+
+### w2eq17
+
+How likely unable to pay for unexpected expenses next 12 months
+
+In the next 12 months, how likely is it that you will be unable to pay for unexpected expenses?
+
+| Value | Category          |
+|:------|:------------------|
+| 1     | Not at all likely |
+| 2     | Not very likely   |
+| 3     | Somewhat likely   |
+| 4     | Very likely       |
+| 5     | Extremely likely  |
+| 9     | No answer\*       |
+
+\*) Missing value
+
+### w2eq18
+
+How likely unemployed and not able to find job next 12 months
+
+In the next 12 months, how likely is it that you may become unemployed and not able to find a job within four weeks?
+
+| Value | Category                              |
+|:------|:--------------------------------------|
+| 1     | Not at all likely                     |
+| 2     | Not very likely                       |
+| 3     | Somewhat likely                       |
+| 4     | Very likely                           |
+| 5     | Extremely likely                      |
+| 6     | Never worked or currently not working |
+| 9     | No answer\*                           |
+
+\*) Missing value
+
+```{r}
+# Load packages
+library(tidyverse)
+
+
+# Load dataset 
+data <- read_delim(
+  "C:/Users/ADMIN/Desktop/DAT505/RR2/ESS.csv",
+  delim = ";",
+  escape_double = FALSE,
+  trim_ws = TRUE
+)
+```
+
+Now we will clean the data and keep only the variables relevent for our research question and hypothesis
+
+```{r}
+
+# 1. Convert relevant variables to numeric 
+data <- data %>%
+  mutate(across(
+    c(w2gq12, w2gq8, w2gq1,
+      w2eq15, w2eq16, w2eq17, w2eq18,
+      hincfel, age, eduyrs),
+    as.numeric
+  ))
+
+# 2. Recode missing values (CRONOS codes from the codebook)
+data <- data %>%
+  mutate(across(
+    c(w2gq12, w2gq8, w2gq1,
+      w2eq15:w2eq18,
+      hincfel, age, eduyrs),
+    ~ ifelse(. %in% c(77, 88, 99), NA, .)
+  ))
+
+# 3. Create key variables
+data <- data %>%
+  mutate(
+    # Main outcome DV
+    climate_efficacy = w2gq12,
+    
+    # Alternative outcome (for robustness maybe later)
+    climate_fatalism = w2gq8,
+    
+    # Economic insecurity index
+    econ_insecurity = rowMeans(select(., w2eq15:w2eq18), na.rm = TRUE),
+    
+    # Controls
+    climate_worry = w2gq1,
+    
+    # Clean factors
+    gender = factor(gndr),
+    country = factor(cntry)
+  )
+
+# 4. Keep only relevant variables
+data_clean <- data %>%
+  select(
+    climate_efficacy,
+    climate_fatalism,
+    econ_insecurity,
+    hincfel,
+    climate_worry,
+    age,
+    eduyrs,
+    gender,
+    country
+  )
+
+# 5. Dropping missing values (for regression)
+data_clean <- data_clean %>%
+  drop_na()
+
+summary(data_clean)
+view(data_clean)
+```
+
+We created an **economic insecurity index** by averaging respondents’ answers to the four hardship-risk questions (`w2eq15–w2eq18`), ignoring missing values, so higher scores reflect greater perceived financial insecurity.
+
+Descriptive statistics
+
+```{r}
+# Create basic descriptive table
+desc_table <- data_clean %>%
+  summarise(
+    climate_efficacy = mean(climate_efficacy, na.rm = TRUE),
+    econ_insecurity  = mean(econ_insecurity, na.rm = TRUE),
+    hincfel          = mean(hincfel, na.rm = TRUE),
+    climate_worry    = mean(climate_worry, na.rm = TRUE),
+    age              = mean(age, na.rm = TRUE),
+    eduyrs           = mean(eduyrs, na.rm = TRUE)
+  ) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "mean") %>%
+  mutate(
+    sd = c(
+      sd(data_clean$climate_efficacy, na.rm = TRUE),
+      sd(data_clean$econ_insecurity, na.rm = TRUE),
+      sd(data_clean$hincfel, na.rm = TRUE),
+      sd(data_clean$climate_worry, na.rm = TRUE),
+      sd(data_clean$age, na.rm = TRUE),
+      sd(data_clean$eduyrs, na.rm = TRUE)
+    )
+  )
+desc_table
+```
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+# Clean + label table
+desc_table_clean <- desc_table %>%
+  mutate(
+    Variable = recode(Variable,
+      "climate_efficacy" = "Climate efficacy",
+      "econ_insecurity"  = "Economic insecurity",
+      "hincfel"          = "Income perception",
+      "climate_worry"    = "Climate worry",
+      "age"              = "Age",
+      "eduyrs"           = "Years of education",
+      "1"                = "Male",
+      "2"                = "Female"
+    )
+  ) %>%
+  # Order variables nicely
+  mutate(Variable = factor(Variable, levels = c(
+    "Climate efficacy",
+    "Economic insecurity",
+    "Income perception",
+    "Climate worry",
+    "Age",
+    "Years of education",
+    "Male",
+    "Female"
+  ))) %>%
+  arrange(Variable)
+
+# Display
+kable(desc_table_clean, digits = 2,
+      caption = "Descriptive Statistics (including demographics)") %>%
+  kable_styling(full_width = FALSE, position = "left")
+```
+
+```{r}
+# Create plot: climate efficacy
+p1 = ggplot(data_clean, aes(x = climate_efficacy)) +
+  geom_histogram(binwidth = 1,
+                 fill = "darkred",
+                 color = "black",
+                 alpha = 0.85) +
+  labs(title = "Distribution of Climate Efficacy",
+       x = "Climate Efficacy (0–10)",
+       y = "Number of Respondents") +
+  theme_minimal()
+p1
+```
+
+```{r}
+# Create plot: economic insecurity
+p2 = ggplot(data_clean, aes(x = econ_insecurity)) +
+  geom_histogram(binwidth = 0.5,
+                 fill = "darkgreen",
+                 color = "black",
+                 alpha = 0.85) +
+  labs(title = "Distribution of Economic Insecurity",
+       x = "Economic Insecurity Index",
+       y = "Number of Respondents") +
+  theme_minimal()
+p2
+```
+
+```{r}
+library(patchwork)
+
+p_combined = (p1 | p2)
+p_combined
+```
+
+```{r}
+# Scatter plot with linear trend
+p3 = ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
+  geom_point(alpha = 0.2,
+             color = "darkblue",
+             size = 1.5) +
+  geom_smooth(method = "lm",
+              color = "orange",
+              fill = "black",
+              alpha = 0.2,
+              linewidth = 1.2) +
+  labs(title = "Economic Insecurity and Climate Efficacy",
+       subtitle = "Higher insecurity is associated with lower perceived agency",
+       x = "Economic Insecurity",
+       y = "Climate Efficacy") +
+  theme_minimal()
+p3
+
+```
+
+Inferential stats:
+
+```{r}
+# Model 1: Bivariate relationship
+model1 <- lm(climate_efficacy ~ econ_insecurity, data = data_clean)
+```
