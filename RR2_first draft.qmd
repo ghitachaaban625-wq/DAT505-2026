@@ -20,7 +20,11 @@ The main outcome variable is perceived climate efficacy, measured through respon
 
 The main explanatory/ independent variable is economic insecurity, constructed as an index combining four items capturing the perceived likelihood of experiencing financial hardship in the next twelve months (w2eq15–w2eq18), including difficulties in meeting basic needs, affording unexpected expenses, or maintaining employment. We also include subjective income perception (hincfel) to capture current economic evaluation, complementing the forward-looking insecurity index.
 
-The main hypothesis is :
+Climate change requires sustained individual and collective action, yet not everyone feels equally capable of contributing. While research has established that concern about climate change drives perceived efficacy, less attention has been paid to how material conditions shape this sense of agency. This matters because economic insecurity has risen sharply across Europe in recent years, and if financial precarity systematically undermines perceived climate efficacy, this has direct implications for how we understand climate disengagement.
+
+Drawing on scarcity theory (Mullainathan & Shafir, 2020), we argue that individuals facing perceived financial hardship have reduced cognitive and motivational resources to engage with long-term collective problems. When meeting basic needs feels uncertain, climate action may feel not just irrelevant but genuinely out of reach.
+
+This leads to our main hypothesis:
 
 H1: Higher perceived economic insecurity is associated with lower climate self-efficacy and higher climate fatalism, even after controlling for climate concern.
 
@@ -82,6 +86,7 @@ data <- data %>%
     # Economic insecurity index
     econ_insecurity = rowMeans(select(., w2eq15:w2eq18), na.rm = TRUE),
     
+
     # Controls
     climate_worry = w2gq1,
     
@@ -114,6 +119,21 @@ view(data_clean)
 ```
 
 We created an **economic insecurity index** by averaging respondents’ answers to the four hardship-risk questions (`w2eq15–w2eq18`), ignoring missing values, so higher scores reflect greater perceived financial insecurity.
+
+```{r}
+ # Cronbach's Alpha for the economic insecurity index
+  
+library(psych)
+
+econ_items <- data %>%
+  select(w2eq15, w2eq16, w2eq17, w2eq18)
+
+alpha_econ <- psych::alpha(econ_items)
+
+alpha_econ$total$raw_alpha
+```
+
+To assess whether the four items used to construct the economic insecurity index formed a coherent scale, I tested their internal consistency using Cronbach’s alpha. The four-item scale showed acceptable internal consistency (`α = 0.78`), supporting the decision to combine these items into a single index.
 
 Descriptive statistics
 
@@ -284,3 +304,229 @@ The robustness check confirms the main findings. The relationship between econom
 The dispersion of the data remains high across all levels of insecurity, suggesting that individuals with both low and high economic insecurity report similar levels of climate efficacy. This reinforces the conclusion that economic insecurity is not a strong predictor of perceived climate agency.
 
 The robustness check supports the initial results: the expected negative relationship is not observed, and the findings remain stable across specifications.
+
+### **Classification: Predictive modelling** 
+
+**Train-test split for the main model:**
+
+To see whether the main model from the analysis can predict new observations, not just fit the sample used to estimate it, we first split the data into a training set and a test set. Then we estimate the model on the training set, and then evaluate how well it predicts climate efficacy in the test set. Since the outcome is continuous, I use RMSE and R-squared to assess predictive performance.
+
+```{r}
+# Load the packages used for this section
+library(caret)
+library(knitr)
+
+# Set a seed so the split is reproducible
+set.seed(1234)
+
+# Create an 80/20 train-test split
+train_index <- createDataPartition(data_clean$climate_efficacy, p = 0.8, list = FALSE)
+
+train_data <- data_clean[train_index, ]
+test_data  <- data_clean[-train_index, ]
+
+# Fit the main linear regression model on the training set
+main_model_train <- lm(
+  climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+    age + eduyrs + gender + country,
+  data = train_data
+)
+
+# Predict climate efficacy in the test set
+test_pred <- predict(main_model_train, newdata = test_data)
+
+# Compute predictive performance
+rmse_test <- RMSE(test_pred, test_data$climate_efficacy)
+r2_test   <- R2(test_pred, test_data$climate_efficacy)
+
+# Put the results into a small table
+test_results <- data.frame(
+  RMSE = rmse_test,
+  R_squared = r2_test
+)
+
+# Display the table
+kable(
+  test_results,
+  digits = 3,
+  caption = "Predictive performance on the test set"
+)
+```
+
+The predictive performance of the model on the test set is relatively weak. The RMSE of 2.57 indicates that, on average, the model’s predictions deviate from the true climate efficacy scores by about 2.6 points. Given that the outcome is measured on a 0–10 scale, this represents a fairly large prediction error.
+
+The R-squared of 0.03 shows that the model explains only 3% of the variance in climate efficacy in unseen data. This is very low, indicating that the model has limited ability to capture the factors that drive differences in climate efficacy across individuals.
+
+These results suggest that while the model may still be useful for identifying associations between variables (as in the inferential analysis), it performs poorly as a predictive tool. In other words, the variables included in the model, such as economic insecurity and climate worry, do not provide strong predictive power for accurately forecasting individual levels of climate efficacy.
+
+**Cross-validated predictive performance of the main model:**
+
+While the train-test split provides a first indication of predictive performance, it relies on a single random partition of the data. To obtain a more reliable estimate, I next use 10-fold cross-validation. This approach repeatedly divides the dataset into training and validation subsets, allowing the model to be evaluated across multiple data partitions rather than a single split.
+
+```{r}
+# Define cross-validation settings
+train_control_cv <- trainControl(
+  method = "cv",
+  number = 10
+)
+
+# Train the model using 10-fold cross-validation
+cv_model <- train(
+  climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+    age + eduyrs + gender + country,
+  data = data_clean,
+  method = "lm",
+  metric = "RMSE",
+  trControl = train_control_cv
+)
+
+print(cv_model)
+```
+
+The cross-validation results confirm that the predictive performance of the model remains limited. The RMSE of 2.45 indicates that, on average, the model’s predictions deviate from the true values of climate efficacy by approximately 2.5 points on the 0–10 scale. This is a relatively large prediction error given the range of the outcome variable.
+
+The R-squared is approximately 0.096, meaning that the model explains about 9.6% of the variance in climate efficacy across the different validation folds. While this is slightly higher than the test set estimate, it still indicates that the vast majority of the variation in climate efficacy remains unexplained.
+
+The MAE of 1.99 provides a complementary measure of prediction error and suggests that the average absolute deviation between predicted and observed values is around 2 points. This reinforces the conclusion that prediction errors are substantial in magnitude.
+
+Overall, these cross-validation results are consistent with the earlier train-test split findings. They suggest that the model has weak predictive performance, even when evaluated across multiple data partitions. This indicates that the limited predictive power is not due to a particular data split, but rather reflects a more general limitation of the model and the available predictors.
+
+**Bootstrap validation**
+
+To further assess the robustness of these findings, I implement bootstrap validation. Unlike cross-validation, which partitions the data into fixed folds, bootstrap validation repeatedly resamples the dataset with replacement, providing an alternative estimate of predictive performance.
+
+```{r}
+#Define bootstrap settings
+
+train_control_boot <- trainControl( method = "boot", number = 100 )
+
+#Train the model using bootstrap validation
+
+boot_model <- train( climate_efficacy ~ econ_insecurity + Income_perception + climate_worry + age + eduyrs + gender + country, data = data_clean, method = "lm", metric = "RMSE", trControl = train_control_boot )
+
+print(boot_model)
+```
+
+The bootstrap validation results further confirm the limited predictive performance of the model. The RMSE is 2.47, which is very close to the value obtained through cross-validation. This indicates that the average prediction error remains substantial, with predicted values deviating from observed climate efficacy by roughly 2.5 points.
+
+The R-squared is approximately 0.071, meaning that the model explains only about 7.1% of the variance in climate efficacy under bootstrap resampling. This is slightly lower than the estimate obtained through cross-validation, suggesting that the model’s predictive capacity is not only weak but also somewhat sensitive to the validation method used.
+
+The MAE of 2.00 reinforces this conclusion, indicating that the average absolute prediction error remains around 2 points, which is considerable given the scale of the outcome variable.
+
+The consistency of RMSE and MAE across validation methods, combined with persistently low R-squared values, suggests that the model’s limited predictive performance is robust. These results indicate that the predictors included in the model capture only a small portion of the variation in climate efficacy, regardless of the resampling strategy employed.
+
+**A data-driven approach: lasso regression:**
+
+The previous analyses evaluated the predictive performance of a theory-driven model. Noow we extend the analysis by adopting a more data-driven approach. Specifically, we use lasso regression, which applies a penalty to the model coefficients and shrinks less informative predictors toward zero. This allows the model to identify a more parsimonious specification that may improve predictive performance.
+
+```{r}
+library(glmnet)
+
+# Create predictor matrix
+x <- model.matrix(
+  climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+    age + eduyrs + gender + country,
+  data = data_clean
+)[, -1]
+
+y <- data_clean$climate_efficacy
+
+set.seed(1234)
+
+# Cross-validated lasso
+cv_lasso <- cv.glmnet(
+  x, y,
+  alpha = 1,
+  family = "gaussian",
+  nfolds = 10
+)
+
+# Lambda values
+data.frame(
+  Lambda_min = cv_lasso$lambda.min,
+  Lambda_1se = cv_lasso$lambda.1se
+)
+
+# Coefficients
+coef(cv_lasso, s = "lambda.min")
+```
+
+Interpretation of lasso results (lambda): The optimal penalty parameter selected through cross-validation is λ = 0.0436 (lambda_min), which corresponds to the model with the lowest prediction error. The alternative, λ = 0.2802 (lambda_1se), represents a more conservative specification with stronger penalization. The relatively low value of λ at lambda.min suggests that only moderate shrinkage is needed to optimize predictive performance.
+
+Interpretation of lasso coefficients: The lasso results show that several predictors are shrunk to zero, meaning they do not contribute meaningfully to prediction once the penalty is applied. In particular, most categories of Income_perception are eliminated, suggesting that this variable adds little predictive value beyond other controls.
+
+Among the retained predictors, climate_worry remains the strongest positive predictor, confirming its central role in explaining variation in climate efficacy. gender and several country fixed effects also remain important, indicating that demographic and contextual differences contribute to prediction.
+
+In contrast, econ_insecurity is retained but with a very small coefficient, suggesting that it has only a limited contribution to predictive performance. Similarly, age and education have very small effects, indicating weak predictive relevance.
+
+**Predictive performance of the lasso model:**
+
+To directly compare the predictive performance of the lasso model with the original specification, we evaluate it using the same train-test approach.
+
+```{r}
+
+# Set a seed
+set.seed(1234)
+
+# Randomly split the data into 80% training data and 20% test data
+train_index <- createDataPartition(data_clean$climate_efficacy, p = 0.8, list = FALSE)
+
+# Create the training and test datasets
+train_data <- data_clean[train_index, ]
+test_data  <- data_clean[-train_index, ]
+
+# Build the predictor matrix for the training data
+# model.matrix() turns categorical predictors into dummy variables
+# We remove the first column because it is the intercept
+x_train <- model.matrix(
+  climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+    age + eduyrs + gender + country,
+  data = train_data
+)[, -1]
+
+# Define the outcome variable for the training data
+y_train <- train_data$climate_efficacy
+
+# Build the predictor matrix for the test data using the same predictors
+x_test <- model.matrix(
+  climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
+    age + eduyrs + gender + country,
+  data = test_data
+)[, -1]
+
+# Define the outcome variable for the test data
+y_test <- test_data$climate_efficacy
+
+# Fit a lasso regression on the training data
+# alpha = 1 specifies lasso
+# family = "gaussian" is used because the outcome is continuous
+# nfolds = 10 means that lambda is selected through 10-fold cross-validation
+cv_lasso_train <- cv.glmnet(
+  x_train, y_train,
+  alpha = 1,
+  family = "gaussian",
+  nfolds = 10
+)
+
+# Use the fitted lasso model to predict climate efficacy in the test set
+# lambda.min gives the value of lambda with the lowest cross-validated error
+lasso_pred <- predict(cv_lasso_train, newx = x_test, s = "lambda.min")
+
+# Calculate RMSE to measure the average prediction error
+rmse_lasso <- RMSE(as.numeric(lasso_pred), y_test)
+
+# Calculate R-squared to measure how much variance is explained in the test set
+r2_lasso   <- R2(as.numeric(lasso_pred), y_test)
+
+# Display the predictive performance of the lasso model
+data.frame(
+  RMSE = rmse_lasso,
+  R_squared = r2_lasso
+)
+```
+
+The predictive performance of the lasso model remains very weak. The RMSE of 2.56 indicates that the average prediction error is virtually identical to that of the main model, with predicted values deviating from observed climate efficacy by about 2.5 points. The R-squared is 0.031, meaning that the model explains only around 3.1% of the variance in climate efficacy in the test set. This is nearly identical to the performance of the original model, suggesting that the lasso specification does not improve predictive accuracy.
+
+**Conclusion of Predictive modelling:**
+
+A better predictive model would not necessarily involve a different estimation technique, but rather the inclusion of more theoretically relevant predictors that capture the psychological and behavioral dimensions of climate efficacy. The current results suggest that economic and demographic variables alone are insufficient to accurately predict individual-level variation in climate efficacy.

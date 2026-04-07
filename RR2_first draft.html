@@ -2186,6 +2186,7 @@ vertical-align: -.125em;
   <li><a href="#data-and-preparation" id="toc-data-and-preparation" class="nav-link" data-scroll-target="#data-and-preparation">Data and Preparation</a></li>
   <li><a href="#inferential-stats" id="toc-inferential-stats" class="nav-link" data-scroll-target="#inferential-stats"><strong>Inferential stats:</strong></a></li>
   <li><a href="#robustness-check" id="toc-robustness-check" class="nav-link" data-scroll-target="#robustness-check">Robustness check:</a></li>
+  <li><a href="#classification-predictive-modelling" id="toc-classification-predictive-modelling" class="nav-link" data-scroll-target="#classification-predictive-modelling"><strong>Classification: Predictive modelling</strong></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -2230,7 +2231,9 @@ vertical-align: -.125em;
 <p>In this report we examine <strong>how economic insecurity shapes individuals’ perceived ability to act on climate change</strong>. Rather than analyzing environmental attitudes in isolation, we try to focus on how material conditions may constrain individual agency. The CRONOS3 Wave 2 dataset is suited for this question, as it combines environmental attitudes from the “Make it Green” module with measures of economic insecurity from the “Make it Equal” module, allowing both dimensions to be analyzed jointly.</p>
 <p>The main outcome variable is perceived climate efficacy, measured through respondents’ agreement with the statement that their own actions can help prevent worsening climate change (w2gq12), which could capture individual-level agency in the environmental domain. As an alternative measure, climate fatalism (w2gq8) captures the opposite perception, namely that it is too difficult for someone like oneself to contribute meaningfully.</p>
 <p>The main explanatory/ independent variable is economic insecurity, constructed as an index combining four items capturing the perceived likelihood of experiencing financial hardship in the next twelve months (w2eq15–w2eq18), including difficulties in meeting basic needs, affording unexpected expenses, or maintaining employment. We also include subjective income perception (hincfel) to capture current economic evaluation, complementing the forward-looking insecurity index.</p>
-<p>The main hypothesis is :</p>
+<p>Climate change requires sustained individual and collective action, yet not everyone feels equally capable of contributing. While research has established that concern about climate change drives perceived efficacy, less attention has been paid to how material conditions shape this sense of agency. This matters because economic insecurity has risen sharply across Europe in recent years, and if financial precarity systematically undermines perceived climate efficacy, this has direct implications for how we understand climate disengagement.</p>
+<p>Drawing on scarcity theory (Mullainathan &amp; Shafir, 2020), we argue that individuals facing perceived financial hardship have reduced cognitive and motivational resources to engage with long-term collective problems. When meeting basic needs feels uncertain, climate action may feel not just irrelevant but genuinely out of reach.</p>
+<p>This leads to our main hypothesis:</p>
 <p>H1: Higher perceived economic insecurity is associated with lower climate self-efficacy and higher climate fatalism, even after controlling for climate concern.</p>
 <p>The theoretical expectation is that economic insecurity reduces perceived agency: when individuals face uncertainty about their material conditions, their attention and resources are directed toward short-term constraints, which may limit their engagement with long-term collective issues such as climate change. To isolate this mechanism, the analysis controls for climate worry (w2gq1), ensuring that the estimated effect is not simply driven by differences in concern about climate change.</p>
 </section>
@@ -2249,24 +2252,27 @@ vertical-align: -.125em;
 <pre><code>Warning: le package &#39;ggplot2&#39; a été compilé avec la version R 4.5.3</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package &#39;purrr&#39; a été compilé avec la version R 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.2
 ✔ ggplot2   4.0.2     ✔ tibble    3.3.0
 ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-✔ purrr     1.1.0     
+✔ purrr     1.2.1     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dataset </span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;C:/Users/ADMIN/Desktop/DAT505/RR2/ESS.csv&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">delim =</span> <span class="st">&quot;;&quot;</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape_double =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> <span class="cn">TRUE</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dataset </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;C:/Users/ADMIN/Desktop/DAT505/RR2/ESS.csv&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">delim =</span> <span class="st">&quot;;&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape_double =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 10442 Columns: 176
 ── Column specification ────────────────────────────────────────────────────────
@@ -2280,64 +2286,65 @@ dbl (161): w2edition, idno, age, agegroup35, w2pspwght, w2weight, w2mode, es...
 </div>
 <p>Now we will clean the data and keep only the variables relevent for our research question and hypothesis</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Convert relevant variables to numeric </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(w2gq12, w2gq8, w2gq1,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      w2eq15, w2eq16, w2eq17, w2eq18,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      hincfel, age, eduyrs),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    as.numeric</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Recode missing values (CRONOS codes from the codebook)</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(w2gq12, w2gq8, w2gq1,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      w2eq15<span class="sc">:</span>w2eq18,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      hincfel, age, eduyrs),</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">ifelse</span>(. <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">77</span>, <span class="dv">88</span>, <span class="dv">99</span>), <span class="cn">NA</span>, .)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Create key variables</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Main outcome DV</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_efficacy =</span> w2gq12,</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Alternative outcome (for robustness maybe later)</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_fatalism =</span> w2gq8,</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Economic insecurity index</span></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">econ_insecurity =</span> <span class="fu">rowMeans</span>(<span class="fu">select</span>(., w2eq15<span class="sc">:</span>w2eq18), <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Controls</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_worry =</span> w2gq1,</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean factors</span></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">factor</span>(gndr),</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="fu">factor</span>(cntry),</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">factor</span>(hincfel)</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Keep only relevant variables</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    climate_efficacy,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    climate_fatalism,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    econ_insecurity,</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    Income_perception,</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    climate_worry,</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    age,</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    eduyrs,</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    gender,</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    country</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Dropping missing values (for regression)</span></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Convert relevant variables to numeric </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(w2gq12, w2gq8, w2gq1,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      w2eq15, w2eq16, w2eq17, w2eq18,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      hincfel, age, eduyrs),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    as.numeric</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Recode missing values (CRONOS codes from the codebook)</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(w2gq12, w2gq8, w2gq1,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      w2eq15<span class="sc">:</span>w2eq18,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>      hincfel, age, eduyrs),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">ifelse</span>(. <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">77</span>, <span class="dv">88</span>, <span class="dv">99</span>), <span class="cn">NA</span>, .)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Create key variables</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Main outcome DV</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_efficacy =</span> w2gq12,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Alternative outcome (for robustness maybe later)</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_fatalism =</span> w2gq8,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Economic insecurity index</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">econ_insecurity =</span> <span class="fu">rowMeans</span>(<span class="fu">select</span>(., w2eq15<span class="sc">:</span>w2eq18), <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Controls</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_worry =</span> w2gq1,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean factors</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">factor</span>(gndr),</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="fu">factor</span>(cntry),</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">factor</span>(hincfel)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Keep only relevant variables</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    climate_efficacy,</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    climate_fatalism,</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    econ_insecurity,</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    Income_perception,</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    climate_worry,</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    age,</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    eduyrs,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    gender,</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    country</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Dropping missing values (for regression)</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> climate_efficacy climate_fatalism econ_insecurity Income_perception
  Min.   : 0.000   Min.   :1.000    Min.   :1.000   1:223            
@@ -2356,32 +2363,59 @@ dbl (161): w2edition, idno, age, agegroup35, w2pspwght, w2weight, w2mode, es...
  Max.   :9.000   Max.   :999.0   Max.   :47.00           HU     : 63  
                                                          (Other):159  </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(data_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(data_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We created an <strong>economic insecurity index</strong> by averaging respondents’ answers to the four hardship-risk questions (<code>w2eq15–w2eq18</code>), ignoring missing values, so higher scores reflect greater perceived financial insecurity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Cronbach&#39;s Alpha for the economic insecurity index</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package &#39;psych&#39; a été compilé avec la version R 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attachement du package : &#39;psych&#39;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Les objets suivants sont masqués depuis &#39;package:ggplot2&#39;:
+
+    %+%, alpha</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>econ_items <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(w2eq15, w2eq16, w2eq17, w2eq18)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>alpha_econ <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(econ_items)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>alpha_econ<span class="sc">$</span>total<span class="sc">$</span>raw_alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7780289</code></pre>
+</div>
+</div>
+<p>To assess whether the four items used to construct the economic insecurity index formed a coherent scale, I tested their internal consistency using Cronbach’s alpha. The four-item scale showed acceptable internal consistency (<code>α = 0.78</code>), supporting the decision to combine these items into a single index.</p>
 <p>Descriptive statistics</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create basic descriptive table</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>desc_table <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_efficacy  =</span> <span class="fu">mean</span>(climate_efficacy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">econ_insecurity   =</span> <span class="fu">mean</span>(econ_insecurity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">mean</span>(Income_perception, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_worry     =</span> <span class="fu">mean</span>(climate_worry, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">age               =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">eduyrs            =</span> <span class="fu">mean</span>(eduyrs, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;mean&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">c</span>(</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>climate_efficacy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>econ_insecurity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>hincfel, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>climate_worry, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>eduyrs, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create basic descriptive table</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>desc_table <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_efficacy  =</span> <span class="fu">mean</span>(climate_efficacy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">econ_insecurity   =</span> <span class="fu">mean</span>(econ_insecurity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">mean</span>(Income_perception, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">climate_worry     =</span> <span class="fu">mean</span>(climate_worry, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">age               =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">eduyrs            =</span> <span class="fu">mean</span>(eduyrs, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;mean&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">c</span>(</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>climate_efficacy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>econ_insecurity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>hincfel, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>climate_worry, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sd</span>(data_clean<span class="sc">$</span>eduyrs, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: There was 1 warning in `summarise()`.
 ℹ In argument: `Income_perception = mean(Income_perception, na.rm = TRUE)`.
@@ -2394,7 +2428,7 @@ Caused by warning in `mean.default()`:
 Caused by warning:
 ! Unknown or uninitialised column: `hincfel`.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>desc_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>desc_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
   Variable           mean    sd
@@ -2408,17 +2442,17 @@ Caused by warning:
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot: climate efficacy</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> climate_efficacy)) <span class="sc">+</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">&quot;darkred&quot;</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Climate Efficacy&quot;</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Climate Efficacy (0–10)&quot;</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Respondents&quot;</span>) <span class="sc">+</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot: climate efficacy</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> climate_efficacy)) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">&quot;darkred&quot;</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Climate Efficacy&quot;</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Climate Efficacy (0–10)&quot;</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Respondents&quot;</span>) <span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2428,17 +2462,17 @@ Caused by warning:
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot: economic insecurity</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity)) <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.5</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">&quot;darkgreen&quot;</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Economic Insecurity&quot;</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Economic Insecurity Index&quot;</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Respondents&quot;</span>) <span class="sc">+</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot: economic insecurity</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity)) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.5</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">&quot;darkgreen&quot;</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Economic Insecurity&quot;</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Economic Insecurity Index&quot;</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Respondents&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2448,12 +2482,12 @@ Caused by warning:
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: le package &#39;patchwork&#39; a été compilé avec la version R 4.5.3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p_combined <span class="ot">=</span> (p1 <span class="sc">|</span> p2)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_combined</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p_combined <span class="ot">=</span> (p1 <span class="sc">|</span> p2)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p_combined</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2467,22 +2501,22 @@ Caused by warning:
 <p>In contrast, economic insecurity is more skewed toward lower values, indicating that most respondents report relatively low to moderate levels of perceived financial risk, with fewer individuals experiencing high insecurity. The right tail suggests that a smaller group faces substantially higher levels of economic vulnerability.</p>
 <p>Taken together, this suggests that while perceived climate agency is relatively widespread, economic insecurity is more unevenly distributed across respondents. This is indicating that most respondents are at low to moderate levels in terms of economic insecurity.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with linear trend</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity, <span class="at">y =</span> climate_efficacy)) <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;darkblue&quot;</span>,</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">&quot;orange&quot;</span>,</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Economic Insecurity and Climate Efficacy&quot;</span>,</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Higher insecurity is associated with lower perceived agency&quot;</span>,</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Economic Insecurity&quot;</span>,</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Climate Efficacy&quot;</span>) <span class="sc">+</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>p3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with linear trend</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity, <span class="at">y =</span> climate_efficacy)) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;darkblue&quot;</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">&quot;orange&quot;</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Economic Insecurity and Climate Efficacy&quot;</span>,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Higher insecurity is associated with lower perceived agency&quot;</span>,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Economic Insecurity&quot;</span>,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Climate Efficacy&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>p3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 </div>
@@ -2503,27 +2537,27 @@ Caused by warning:
 <h3 class="anchored" data-anchor-id="inferential-stats"><strong>Inferential stats:</strong></h3>
 <p>Because the gender and income perception have 9 coded as NA, I changed it (probably should move it to the data cleaning section).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert to numeric FIRST</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(gender)),</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(Income_perception)),</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove invalid codes</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">na_if</span>(gender, <span class="dv">9</span>),</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">na_if</span>(Income_perception, <span class="dv">9</span>),</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert to factor AFTER cleaning</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">factor</span>(gender),</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">factor</span>(Income_perception)</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(gender, Income_perception)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert to numeric FIRST</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(gender)),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(Income_perception)),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove invalid codes</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">na_if</span>(gender, <span class="dv">9</span>),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">na_if</span>(Income_perception, <span class="dv">9</span>),</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert to factor AFTER cleaning</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender =</span> <span class="fu">factor</span>(gender),</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income_perception =</span> <span class="fu">factor</span>(Income_perception)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(gender, Income_perception)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1: Bivariate relationship </span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity, <span class="at">data =</span> data_clean)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1: Bivariate relationship </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity, <span class="at">data =</span> data_clean)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -2547,10 +2581,10 @@ F-statistic: 6.272 on 1 and 723 DF,  p-value: 0.01248</code></pre>
 </div>
 <p>In Model 1, the bivariate relationship between economic insecurity and climate efficacy is small and not statistically significant (<em>B</em> = 0.075, p = 0.304). This indicates that, on its own, economic insecurity is not associated with lower perceived climate agency, and the direction of the relationship is slightly positive rather than negative.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2: Add climate worry (core control)</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> climate_worry, <span class="at">data =</span> data_clean)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2: Add climate worry (core control)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> climate_worry, <span class="at">data =</span> data_clean)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -2576,11 +2610,11 @@ F-statistic: 23.14 on 2 and 722 DF,  p-value: 1.811e-10</code></pre>
 </div>
 <p>In Model 2, after controlling for climate worry, the coefficient for economic insecurity remains positive and non-significant, while climate worry emerges as a strong and statistically significant predictor (<em>B</em>= 0.489, p &lt; 0.001). This suggests that perceived agency is more closely related to concern about climate change than to economic insecurity.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 3: Full model with controls</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>               age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data_clean)</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 3: Full model with controls</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>               age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data_clean)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -2626,10 +2660,10 @@ F-statistic: 5.724 on 18 and 706 DF,  p-value: 7.041e-13</code></pre>
 <section id="robustness-check" class="level3">
 <h3 class="anchored" data-anchor-id="robustness-check">Robustness check:</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_fatalism <span class="sc">~</span> econ_insecurity <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>               age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data_clean)</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(climate_fatalism <span class="sc">~</span> econ_insecurity <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>               age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data_clean)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -2665,9 +2699,9 @@ Residual standard error: 1.126 on 709 degrees of freedom
 Multiple R-squared:  0.07179,   Adjusted R-squared:  0.05215 
 F-statistic: 3.656 on 15 and 709 DF,  p-value: 3.443e-06</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity, <span class="at">y =</span> climate_efficacy)) <span class="sc">+</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_clean, <span class="fu">aes</span>(<span class="at">x =</span> econ_insecurity, <span class="at">y =</span> climate_efficacy)) <span class="sc">+</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 </div>
@@ -2682,6 +2716,310 @@ F-statistic: 3.656 on 15 and 709 DF,  p-value: 3.443e-06</code></pre>
 <p>The robustness check confirms the main findings. The relationship between economic insecurity and climate efficacy remains weak and slightly positive, as indicated by the upward-sloping regression line. This is consistent with the regression results, where the coefficient for economic insecurity was small and not statistically significant (<em>B</em> = 0.075, p = 0.304).</p>
 <p>The dispersion of the data remains high across all levels of insecurity, suggesting that individuals with both low and high economic insecurity report similar levels of climate efficacy. This reinforces the conclusion that economic insecurity is not a strong predictor of perceived climate agency.</p>
 <p>The robustness check supports the initial results: the expected negative relationship is not observed, and the findings remain stable across specifications.</p>
+</section>
+<section id="classification-predictive-modelling" class="level3">
+<h3 class="anchored" data-anchor-id="classification-predictive-modelling"><strong>Classification: Predictive modelling</strong></h3>
+<p><strong>Train-test split for the main model:</strong></p>
+<p>To see whether the main model from the analysis can predict new observations, not just fit the sample used to estimate it, we first split the data into a training set and a test set. Then we estimate the model on the training set, and then evaluate how well it predicts climate efficacy in the test set. Since the outcome is continuous, I use RMSE and R-squared to assess predictive performance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the packages used for this section</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package &#39;caret&#39; a été compilé avec la version R 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Le chargement a nécessité le package : lattice</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attachement du package : &#39;caret&#39;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>L&#39;objet suivant est masqué depuis &#39;package:purrr&#39;:
+
+    lift</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a seed so the split is reproducible</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an 80/20 train-test split</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>train_index <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_clean<span class="sc">$</span>climate_efficacy, <span class="at">p =</span> <span class="fl">0.8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> data_clean[train_index, ]</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>test_data  <span class="ot">&lt;-</span> data_clean[<span class="sc">-</span>train_index, ]</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the main linear regression model on the training set</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>main_model_train <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> train_data</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict climate efficacy in the test set</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>test_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(main_model_train, <span class="at">newdata =</span> test_data)</span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute predictive performance</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>rmse_test <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(test_pred, test_data<span class="sc">$</span>climate_efficacy)</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>r2_test   <span class="ot">&lt;-</span> <span class="fu">R2</span>(test_pred, test_data<span class="sc">$</span>climate_efficacy)</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Put the results into a small table</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>test_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">RMSE =</span> rmse_test,</span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">R_squared =</span> r2_test</span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the table</span></span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
+<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a>  test_results,</span>
+<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Predictive performance on the test set&quot;</span></span>
+<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Predictive performance on the test set</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">R_squared</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2.57</td>
+<td style="text-align: right;">0.03</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The predictive performance of the model on the test set is relatively weak. The RMSE of 2.57 indicates that, on average, the model’s predictions deviate from the true climate efficacy scores by about 2.6 points. Given that the outcome is measured on a 0–10 scale, this represents a fairly large prediction error.</p>
+<p>The R-squared of 0.03 shows that the model explains only 3% of the variance in climate efficacy in unseen data. This is very low, indicating that the model has limited ability to capture the factors that drive differences in climate efficacy across individuals.</p>
+<p>These results suggest that while the model may still be useful for identifying associations between variables (as in the inferential analysis), it performs poorly as a predictive tool. In other words, the variables included in the model, such as economic insecurity and climate worry, do not provide strong predictive power for accurately forecasting individual levels of climate efficacy.</p>
+<p><strong>Cross-validated predictive performance of the main model:</strong></p>
+<p>While the train-test split provides a first indication of predictive performance, it relies on a single random partition of the data. To obtain a more reliable estimate, I next use 10-fold cross-validation. This approach repeatedly divides the dataset into training and validation subsets, allowing the model to be evaluated across multiple data partitions rather than a single split.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define cross-validation settings</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>train_control_cv <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;cv&quot;</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">number =</span> <span class="dv">10</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model using 10-fold cross-validation</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>cv_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_clean,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="st">&quot;RMSE&quot;</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> train_control_cv</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cv_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+725 samples
+  7 predictor
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 651, 651, 653, 652, 653, 653, ... 
+Resampling results:
+
+  RMSE     Rsquared    MAE     
+  2.44696  0.09631299  1.990283
+
+Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+</div>
+<p>The cross-validation results confirm that the predictive performance of the model remains limited. The RMSE of 2.45 indicates that, on average, the model’s predictions deviate from the true values of climate efficacy by approximately 2.5 points on the 0–10 scale. This is a relatively large prediction error given the range of the outcome variable.</p>
+<p>The R-squared is approximately 0.096, meaning that the model explains about 9.6% of the variance in climate efficacy across the different validation folds. While this is slightly higher than the test set estimate, it still indicates that the vast majority of the variation in climate efficacy remains unexplained.</p>
+<p>The MAE of 1.99 provides a complementary measure of prediction error and suggests that the average absolute deviation between predicted and observed values is around 2 points. This reinforces the conclusion that prediction errors are substantial in magnitude.</p>
+<p>Overall, these cross-validation results are consistent with the earlier train-test split findings. They suggest that the model has weak predictive performance, even when evaluated across multiple data partitions. This indicates that the limited predictive power is not due to a particular data split, but rather reflects a more general limitation of the model and the available predictors.</p>
+<p><strong>Bootstrap validation</strong></p>
+<p>To further assess the robustness of these findings, I implement bootstrap validation. Unlike cross-validation, which partitions the data into fixed folds, bootstrap validation repeatedly resamples the dataset with replacement, providing an alternative estimate of predictive performance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Define bootstrap settings</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>train_control_boot <span class="ot">&lt;-</span> <span class="fu">trainControl</span>( <span class="at">method =</span> <span class="st">&quot;boot&quot;</span>, <span class="at">number =</span> <span class="dv">100</span> )</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Train the model using bootstrap validation</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>boot_model <span class="ot">&lt;-</span> <span class="fu">train</span>( climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span> age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country, <span class="at">data =</span> data_clean, <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">metric =</span> <span class="st">&quot;RMSE&quot;</span>, <span class="at">trControl =</span> train_control_boot )</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(boot_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+725 samples
+  7 predictor
+
+No pre-processing
+Resampling: Bootstrapped (100 reps) 
+Summary of sample sizes: 725, 725, 725, 725, 725, 725, ... 
+Resampling results:
+
+  RMSE      Rsquared    MAE     
+  2.471022  0.07126195  2.004107
+
+Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+</div>
+<p>The bootstrap validation results further confirm the limited predictive performance of the model. The RMSE is 2.47, which is very close to the value obtained through cross-validation. This indicates that the average prediction error remains substantial, with predicted values deviating from observed climate efficacy by roughly 2.5 points.</p>
+<p>The R-squared is approximately 0.071, meaning that the model explains only about 7.1% of the variance in climate efficacy under bootstrap resampling. This is slightly lower than the estimate obtained through cross-validation, suggesting that the model’s predictive capacity is not only weak but also somewhat sensitive to the validation method used.</p>
+<p>The MAE of 2.00 reinforces this conclusion, indicating that the average absolute prediction error remains around 2 points, which is considerable given the scale of the outcome variable.</p>
+<p>The consistency of RMSE and MAE across validation methods, combined with persistently low R-squared values, suggests that the model’s limited predictive performance is robust. These results indicate that the predictors included in the model capture only a small portion of the variation in climate efficacy, regardless of the resampling strategy employed.</p>
+<p><strong>A data-driven approach: lasso regression:</strong></p>
+<p>The previous analyses evaluated the predictive performance of a theory-driven model. Noow we extend the analysis by adopting a more data-driven approach. Specifically, we use lasso regression, which applies a penalty to the model coefficients and shrinks less informative predictors toward zero. This allows the model to identify a more parsimonious specification that may improve predictive performance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package &#39;glmnet&#39; a été compilé avec la version R 4.5.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Le chargement a nécessité le package : Matrix</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attachement du package : &#39;Matrix&#39;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Les objets suivants sont masqués depuis &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loaded glmnet 4.1-10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create predictor matrix</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_clean</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> data_clean<span class="sc">$</span>climate_efficacy</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-validated lasso</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>cv_lasso <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>  x, y,</span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfolds =</span> <span class="dv">10</span></span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Lambda values</span></span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lambda_min =</span> cv_lasso<span class="sc">$</span>lambda.min,</span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lambda_1se =</span> cv_lasso<span class="sc">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Lambda_min Lambda_1se
+1 0.04359752   0.280248</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficients</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(cv_lasso, <span class="at">s =</span> <span class="st">&quot;lambda.min&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>19 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+                     lambda.min
+(Intercept)         3.572392661
+econ_insecurity     0.058225731
+Income_perception2  .          
+Income_perception3  .          
+Income_perception4  .          
+climate_worry       0.464408772
+age                -0.005724777
+eduyrs             -0.008874907
+gender2             0.416095763
+countryBE          -0.144779480
+countryCZ           .          
+countryFI           0.437562188
+countryFR           .          
+countryGB          -0.053351000
+countryHU           0.905494741
+countryIS          -0.555534464
+countryPL          -0.114294108
+countryPT           1.352185154
+countrySI           0.217787841</code></pre>
+</div>
+</div>
+<p>Interpretation of lasso results (lambda): The optimal penalty parameter selected through cross-validation is λ = 0.0436 (lambda_min), which corresponds to the model with the lowest prediction error. The alternative, λ = 0.2802 (lambda_1se), represents a more conservative specification with stronger penalization. The relatively low value of λ at lambda.min suggests that only moderate shrinkage is needed to optimize predictive performance.</p>
+<p>Interpretation of lasso coefficients: The lasso results show that several predictors are shrunk to zero, meaning they do not contribute meaningfully to prediction once the penalty is applied. In particular, most categories of Income_perception are eliminated, suggesting that this variable adds little predictive value beyond other controls.</p>
+<p>Among the retained predictors, climate_worry remains the strongest positive predictor, confirming its central role in explaining variation in climate efficacy. gender and several country fixed effects also remain important, indicating that demographic and contextual differences contribute to prediction.</p>
+<p>In contrast, econ_insecurity is retained but with a very small coefficient, suggesting that it has only a limited contribution to predictive performance. Similarly, age and education have very small effects, indicating weak predictive relevance.</p>
+<p><strong>Predictive performance of the lasso model:</strong></p>
+<p>To directly compare the predictive performance of the lasso model with the original specification, we evaluate it using the same train-test approach.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a seed</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomly split the data into 80% training data and 20% test data</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>train_index <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_clean<span class="sc">$</span>climate_efficacy, <span class="at">p =</span> <span class="fl">0.8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the training and test datasets</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> data_clean[train_index, ]</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>test_data  <span class="ot">&lt;-</span> data_clean[<span class="sc">-</span>train_index, ]</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the predictor matrix for the training data</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="co"># model.matrix() turns categorical predictors into dummy variables</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the first column because it is the intercept</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>x_train <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> train_data</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the outcome variable for the training data</span></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>y_train <span class="ot">&lt;-</span> train_data<span class="sc">$</span>climate_efficacy</span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the predictor matrix for the test data using the same predictors</span></span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a>x_test <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(</span>
+<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a>  climate_efficacy <span class="sc">~</span> econ_insecurity <span class="sc">+</span> Income_perception <span class="sc">+</span> climate_worry <span class="sc">+</span></span>
+<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span> eduyrs <span class="sc">+</span> gender <span class="sc">+</span> country,</span>
+<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> test_data</span>
+<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the outcome variable for the test data</span></span>
+<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a>y_test <span class="ot">&lt;-</span> test_data<span class="sc">$</span>climate_efficacy</span>
+<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a lasso regression on the training data</span></span>
+<span id="cb60-34"><a href="#cb60-34" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha = 1 specifies lasso</span></span>
+<span id="cb60-35"><a href="#cb60-35" aria-hidden="true" tabindex="-1"></a><span class="co"># family = &quot;gaussian&quot; is used because the outcome is continuous</span></span>
+<span id="cb60-36"><a href="#cb60-36" aria-hidden="true" tabindex="-1"></a><span class="co"># nfolds = 10 means that lambda is selected through 10-fold cross-validation</span></span>
+<span id="cb60-37"><a href="#cb60-37" aria-hidden="true" tabindex="-1"></a>cv_lasso_train <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(</span>
+<span id="cb60-38"><a href="#cb60-38" aria-hidden="true" tabindex="-1"></a>  x_train, y_train,</span>
+<span id="cb60-39"><a href="#cb60-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb60-40"><a href="#cb60-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb60-41"><a href="#cb60-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfolds =</span> <span class="dv">10</span></span>
+<span id="cb60-42"><a href="#cb60-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-43"><a href="#cb60-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-44"><a href="#cb60-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the fitted lasso model to predict climate efficacy in the test set</span></span>
+<span id="cb60-45"><a href="#cb60-45" aria-hidden="true" tabindex="-1"></a><span class="co"># lambda.min gives the value of lambda with the lowest cross-validated error</span></span>
+<span id="cb60-46"><a href="#cb60-46" aria-hidden="true" tabindex="-1"></a>lasso_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(cv_lasso_train, <span class="at">newx =</span> x_test, <span class="at">s =</span> <span class="st">&quot;lambda.min&quot;</span>)</span>
+<span id="cb60-47"><a href="#cb60-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-48"><a href="#cb60-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate RMSE to measure the average prediction error</span></span>
+<span id="cb60-49"><a href="#cb60-49" aria-hidden="true" tabindex="-1"></a>rmse_lasso <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(<span class="fu">as.numeric</span>(lasso_pred), y_test)</span>
+<span id="cb60-50"><a href="#cb60-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-51"><a href="#cb60-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate R-squared to measure how much variance is explained in the test set</span></span>
+<span id="cb60-52"><a href="#cb60-52" aria-hidden="true" tabindex="-1"></a>r2_lasso   <span class="ot">&lt;-</span> <span class="fu">R2</span>(<span class="fu">as.numeric</span>(lasso_pred), y_test)</span>
+<span id="cb60-53"><a href="#cb60-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-54"><a href="#cb60-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the predictive performance of the lasso model</span></span>
+<span id="cb60-55"><a href="#cb60-55" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb60-56"><a href="#cb60-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">RMSE =</span> rmse_lasso,</span>
+<span id="cb60-57"><a href="#cb60-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">R_squared =</span> r2_lasso</span>
+<span id="cb60-58"><a href="#cb60-58" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      RMSE  R_squared
+1 2.558112 0.03132248</code></pre>
+</div>
+</div>
+<p>The predictive performance of the lasso model remains very weak. The RMSE of 2.56 indicates that the average prediction error is virtually identical to that of the main model, with predicted values deviating from observed climate efficacy by about 2.5 points. The R-squared is 0.031, meaning that the model explains only around 3.1% of the variance in climate efficacy in the test set. This is nearly identical to the performance of the original model, suggesting that the lasso specification does not improve predictive accuracy.</p>
+<p><strong>Conclusion of Predictive modelling:</strong></p>
+<p>A better predictive model would not necessarily involve a different estimation technique, but rather the inclusion of more theoretically relevant predictors that capture the psychological and behavioral dimensions of climate efficacy. The current results suggest that economic and demographic variables alone are insufficient to accurately predict individual-level variation in climate efficacy.</p>
 </section>
 </section>
 
