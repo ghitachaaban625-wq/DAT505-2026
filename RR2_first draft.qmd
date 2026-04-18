@@ -10,33 +10,39 @@ author: Chita Chaaban
 date: Winter 2026
 ---
 
-## First Draft:
+## Research Report 2: Does economic instability change one's ability to act on climate change?
 
 ### Introduction
 
-In this report we examine **how economic insecurity shapes individuals’ perceived ability to act on climate change**. Rather than analyzing environmental attitudes in isolation, we try to focus on how material conditions may constrain individual agency. The CRONOS3 Wave 2 dataset is suited for this question, as it combines environmental attitudes from the “Make it Green” module with measures of economic insecurity from the “Make it Equal” module, allowing both dimensions to be analyzed jointly.
+In 2020, in response to the COVID-19 pandemic, the European Commission proposed NextGenerationEU; a €750 billion recovery plan aimed at making Europe greener, more digital, and more resilient (European Commission, 2020). The plan is organized around five priority areas: Make it Green, Make it Digital, Make it Healthy, Make it Strong, and Make it Equal. But to design effective policies, they should be evidence based and supported by data. Therefore Infra4NextGen was launched in March 2024 and funded by the European Commission, it brings together outputs from key social science research infrastructures to inform the NextGenerationEU programme. The project is coordinated by the European Social Survey (ESS ERIC) and collects new cross-national data through the CRONOS-3 panel which is an online survey run across eleven European countries, organized by the five NextGenerationEU themes (Infra4NextGen, 2024).
 
-The main outcome variable is perceived climate efficacy, measured through respondents’ agreement with the statement that their own actions can help prevent worsening climate change (w2gq12), which could capture individual-level agency in the environmental domain. As an alternative measure, climate fatalism (w2gq8) captures the opposite perception, namely that it is too difficult for someone like oneself to contribute meaningfully.
+Although this is an interesting approach to gathering evidence; the five themes chosen are not as independent as the project explores them. Attitudes on one topic are often shaped by conditions that belong to another. For example, access to digital tools could contribute to shaping one’s health literacy (Make it Digital × Make it Healthy). At a broader theoretical level, attitudes and beliefs are rarely held in isolation. Individuals tend to organize their opinions into interconnected belief systems, such that positions on one issue are often related to positions on others. This means that treating themes as analytically separate risks overlooking the consistency, spillover, and mutual reinforcement that can exist across domains (Blankenship et al., 2015). Brandt and Sleegers (2021) make a similar point at the political level, arguing that belief systems are better understood as dynamic networks of interconnected believes than as independent opinions. By focusing on these interconnections, the present report offers a cross-theme analysis attentive to the relational structure of attitudes rather than assuming that each theme operates independently 
 
-The main explanatory/ independent variable is economic insecurity, constructed as an index combining four items capturing the perceived likelihood of experiencing financial hardship in the next twelve months (w2eq15–w2eq18), including difficulties in meeting basic needs, affording unexpected expenses, or maintaining employment. We also include subjective income perception (hincfel) to capture current economic evaluation, complementing the forward-looking insecurity index.
+**Research Question and Hypotheses**
 
-Climate change requires sustained individual and collective action, yet not everyone feels equally capable of contributing. While research has established that concern about climate change drives perceived efficacy, less attention has been paid to how material conditions shape this sense of agency. This matters because economic insecurity has risen sharply across Europe in recent years, and if financial precarity systematically undermines perceived climate efficacy, this has direct implications for how we understand climate disengagement.
+The environment is in crisis, and Europeans largely know it. According to the Special Eurobarometer on Climate Change, 93% of EU citizens believe climate change is a serious problem, and 88% agree that greenhouse gas emissions should be reduced to a minimum. Concern is widespread, but concern alone does not produce action, and something is blocking the gap between the two.
 
-Drawing on scarcity theory (Mullainathan & Shafir, 2020), we argue that individuals facing perceived financial hardship have reduced cognitive and motivational resources to engage with long-term collective problems. When meeting basic needs feels uncertain, climate action may feel not just irrelevant but genuinely out of reach.
+There are many reasons for this. One that gets less attention is people's perceived ability to act. Acting on climate change is rarely free, it takes time, money, and a sense that what you do matters. We argue that when people are economically insecure, this perceived ability to act shrinks. Green products cost more. Sustainable choices require planning ahead. And when one is worried about making rent or keeping a job, thinking about long-term collective problems like climate change can feel genuinely out of reach. This could be explained through present bias, where when immediate survival takes priority, long-term threats feel less urgent and less actionable (Jaglan & Shergill, 2024; Camp, 2022). So the question this paper asks is: **how does economic insecurity shape individuals' perceived ability to act on climate change?**
 
-This leads to our main hypothesis:
+Our prediction of the answer to this research question is building on scarcity theory (Mullainathan & Shafir, 2020). It argues that individuals facing financial hardship have reduced cognitive and motivational bandwidth to engage with long-term collective problems. Thus when meeting basic needs feels uncertain, climate action may feel unreachable. 
 
-H1: Higher perceived economic insecurity is associated with lower climate self-efficacy and higher climate fatalism, even after controlling for climate concern.
+**H1: Higher perceived economic insecurity is associated with lower climate self-efficacy (**perceived ability to act against climate change)**, even after controlling for climate concern.**
 
-The theoretical expectation is that economic insecurity reduces perceived agency: when individuals face uncertainty about their material conditions, their attention and resources are directed toward short-term constraints, which may limit their engagement with long-term collective issues such as climate change. To isolate this mechanism, the analysis controls for climate worry (w2gq1), ensuring that the estimated effect is not simply driven by differences in concern about climate change.
+If this hypothesis is confirmed, then the findings would be important especially when designing an intervention or policy, because if green taxes and eco-friendly options are less accessible to those in financial hardship, and if economic insecurity also undermines the sense of agency needed to act; then green policies that ignore inequality risk deepening the very disengagement they're trying to address.
 
 ### Data and Preparation
 
-The analysis uses the CRONOS3 Wave 2 (edition 1.3) dataset, a cross-national European survey conducted in 2024 across eleven countries. The dataset includes detailed measures of environmental attitudes, economic insecurity, and socio-demographic characteristics. The data was first restricted to the variables relevant to the research question. All selected variables were converted to numeric format where necessary, and missing values were recoded according to the survey coding scheme (77, 88, 99 treated as missing).
+**Data:**
 
-An index of economic insecurity was then constructed by taking the average of four items capturing perceived risks of financial hardship (w2eq15–w2eq18), ignoring missing values. This index is meant to provide us with a continuous measure of perceived economic vulnerability, where higher values indicate greater insecurity. The main outcome variable, climate efficacy, was directly taken from, while climate fatalism was retained as an alternative outcome for robustness checks. Control variables were also defined at this stage. Climate worry was also included as a control to distinguish concern from perceived agency. Then, additional socio-demographic variables, including age, gender, education, and country, were included to account for potential confounding factors.
+The data used in this study comes from the CRONOS-3 panel survey. CRONOS-3, is a cross-national online panel survey run across 11 countries: Austria, Belgium, Czechia, Finland, France, Hungary, Iceland, Portugal, Slovenia, Sweden, and the United Kingdom. Respondents were recruited on the back of ESS and invited to complete the survey online or via paper questionnaire, with each wave covering 18 questions per theme. The data used in this paper comes from Wave 2 of CRONOS-3, conducted between November and December 2024.
 
-Finally, the dataset was reduced to a clean analytical sample by keeping only the variables of interest and removing observations with missing values on these variables. This ensures consistency across all models and avoids variations in sample size between specifications.
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE
+)
+```
 
 ```{r}
 # Load packages
@@ -52,11 +58,26 @@ data <- read_delim(
 )
 ```
 
-Now we will clean the data and keep only the variables relevent for our research question and hypothesis
+**Main Variables:** 
+
+The main independent variable is perceived economic insecurity, constructed from four survey items (w2eq15–w2eq18), which are later combined into a single index.
+
+The outcome of interest is perceived ability to act on climate change, measured primarily through climate self-efficacy, with climate fatalism used as an alternative measure capturing the same concept from the opposite direction.
+
+Climate worry is included as a control variable to separate general concern about climate change from perceived ability to act. Additional socio-demographic controls (age, gender, education, and country) are included to account for potential confounding factors.
+
+**Data preparation:**
+
+First, missing values were recoded following the CRONOS-3 coding scheme. Non-substantive responses use variable-specific numeric codes. Most variables use a single-digit code: 9 for no answer, which was recoded to NA. The exception is eduyrs, which uses two-digit codes (77 for refusal, 88 for don't know, 99 for no answer), and w2gq12, which uses 99 for no answer given its 0–10 scale. Income perception (hincfel) uses three single-digit codes: 7 for refusal, 8 for don't know, and 9 for no answer. Age uses 999 for not available. All of these were recoded to NA before analysis.
+
+We then created the main variables for the analysis. Climate efficacy (w2gq12) was kept as the main outcome variable, and climate fatalism (w2gq8) was retained as an alternative measure. An index of economic insecurity was then constructed by taking the average of four items capturing perceived risks of financial hardship (w2eq15–w2eq18), ignoring missing values. This index is meant to provide us with a continuous measure of perceived economic vulnerability, where higher values indicate greater insecurity.
+
+The other variables like climate worry, age, years of education, gender, country, and income perception, were kept as controls, with gender, country, and income perception converted to categorical variables.
+
+Finally, we reduced the dataset to only the variables relevant to the analysis, and dropped any observations with missing values on any of these variables. This gives us a clean, consistent sample across all models.
 
 ```{r}
-
-# 1. Convert relevant variables to numeric 
+# 1. Convert relevant variables to numeric
 data <- data %>%
   mutate(across(
     c(w2gq12, w2gq8, w2gq1,
@@ -65,35 +86,43 @@ data <- data %>%
     as.numeric
   ))
 
-# 2. Recode missing values (CRONOS codes from the codebook)
+# 2. Recode missing values according to CRONOS-3 codebook
 data <- data %>%
-  mutate(across(
-    c(w2gq12, w2gq8, w2gq1,
-      w2eq15:w2eq18,
-      hincfel, age, eduyrs),
-    ~ ifelse(. %in% c(77, 88, 99), NA, .)
-  ))
+  mutate(
+    # 0-10 scale, missing = 99 only
+    w2gq12  = ifelse(w2gq12 == 99, NA, w2gq12),
+    
+    # 1-5 scale, missing = 9 only
+    w2gq8   = ifelse(w2gq8 == 9, NA, w2gq8),
+    w2gq1   = ifelse(w2gq1 == 9, NA, w2gq1),
+    w2eq15  = ifelse(w2eq15 == 9, NA, w2eq15),
+    w2eq16  = ifelse(w2eq16 == 9, NA, w2eq16),
+    w2eq17  = ifelse(w2eq17 == 9, NA, w2eq17),
+    w2eq18  = ifelse(w2eq18 == 9, NA, w2eq18),
+    
+    # hincfel: 7 = refusal, 8 = don't know, 9 = no answer
+    hincfel = ifelse(hincfel %in% c(7, 8, 9), NA, hincfel),
+    
+    # eduyrs: 77 = refusal, 88 = don't know, 99 = no answer
+    eduyrs  = ifelse(eduyrs %in% c(77, 88, 99), NA, eduyrs),
+    
+    # gndr: 9 = no answer
+    gndr    = ifelse(gndr == 9, NA, gndr),
+    
+    # age: 999 = not available
+    age     = ifelse(age == 999, NA, age)
+  )
 
 # 3. Create key variables
 data <- data %>%
   mutate(
-    # Main outcome DV
-    climate_efficacy = w2gq12,
-    
-    # Alternative outcome (for robustness maybe later)
-    climate_fatalism = w2gq8,
-    
-    # Economic insecurity index
-    econ_insecurity = rowMeans(select(., w2eq15:w2eq18), na.rm = TRUE),
-    
-
-    # Controls
-    climate_worry = w2gq1,
-    
-    # Clean factors
-    gender = factor(gndr),
-    country = factor(cntry),
-    Income_perception = factor(hincfel)
+    climate_efficacy   = w2gq12,
+    climate_fatalism   = w2gq8,
+    econ_insecurity    = rowMeans(select(., w2eq15:w2eq18), na.rm = TRUE),
+    climate_worry      = w2gq1,
+    gender             = factor(gndr),
+    country            = factor(cntry),
+    Income_perception  = factor(hincfel)
   )
 
 # 4. Keep only relevant variables
@@ -110,15 +139,14 @@ data_clean <- data %>%
     country
   )
 
-# 5. Dropping missing values (for regression)
+# 5. Drop missing values
 data_clean <- data_clean %>%
   drop_na()
 
-summary(data_clean)
 view(data_clean)
 ```
 
-We created an **economic insecurity index** by averaging respondents’ answers to the four hardship-risk questions (`w2eq15–w2eq18`), ignoring missing values, so higher scores reflect greater perceived financial insecurity.
+We must assess whether the four items used to construct the economic insecurity index formed a coherent scale. So to test their internal consistency we are using Cronbach’s alpha
 
 ```{r}
  # Cronbach's Alpha for the economic insecurity index
@@ -133,9 +161,9 @@ alpha_econ <- psych::alpha(econ_items)
 alpha_econ$total$raw_alpha
 ```
 
-To assess whether the four items used to construct the economic insecurity index formed a coherent scale, I tested their internal consistency using Cronbach’s alpha. The four-item scale showed acceptable internal consistency (`α = 0.78`), supporting the decision to combine these items into a single index.
+The four-item scale showed acceptable internal consistency (α = 0.73), supports that these items are consistent enough to justify averaging or summing them into one index.
 
-Descriptive statistics
+### **Descriptive statistics:**
 
 ```{r}
 # Create basic descriptive table
@@ -169,12 +197,14 @@ p1 = ggplot(data_clean, aes(x = climate_efficacy)) +
                  fill = "darkred",
                  color = "black",
                  alpha = 0.85) +
-  labs(title = "Distribution of Climate Efficacy",
+  labs(title = "figure 1: Distribution of Climate Efficacy",
        x = "Climate Efficacy (0–10)",
        y = "Number of Respondents") +
   theme_minimal()
 p1
 ```
+
+Figure 1 shows that Climate efficacy is roughly bell-shaped, centred around 5 on the 0–10 scale. Most respondents place themselves in the middle range, which tells us that perceived climate agency is neither particularly high nor particularly low in this sample; perhaps participants are uncertain so they opt for a moreso neutral response.
 
 ```{r}
 # Create plot: economic insecurity
@@ -183,27 +213,14 @@ p2 = ggplot(data_clean, aes(x = econ_insecurity)) +
                  fill = "darkgreen",
                  color = "black",
                  alpha = 0.85) +
-  labs(title = "Distribution of Economic Insecurity",
+  labs(title = "Figure 2: Distribution of Economic Insecurity",
        x = "Economic Insecurity Index",
        y = "Number of Respondents") +
   theme_minimal()
 p2
 ```
 
-```{r}
-library(patchwork)
-
-p_combined = (p1 | p2)
-p_combined
-```
-
-Interpretation
-
-Climate efficacy appears moderately centered, with most respondents clustering around mid-to-high values, suggesting that individuals generally report some level of perceived agency in addressing climate change. The distribution is relatively balanced, though slightly concentrated around the middle of the scale.
-
-In contrast, economic insecurity is more skewed toward lower values, indicating that most respondents report relatively low to moderate levels of perceived financial risk, with fewer individuals experiencing high insecurity. The right tail suggests that a smaller group faces substantially higher levels of economic vulnerability.
-
-Taken together, this suggests that while perceived climate agency is relatively widespread, economic insecurity is more unevenly distributed across respondents. This is indicating that most respondents are at low to moderate levels in terms of economic insecurity.
+Figure 2 showcases that Economic insecurity is right-skewed: most respondents clustering at the lower end of the 1–5 scale. This means the majority of people in our sample perceive themselves as relatively financially secure, with fewer respondents reporting high levels of insecurity.
 
 ```{r}
 # Scatter plot with linear trend
@@ -225,65 +242,53 @@ p3
 
 ```
 
-Interpretation:
-
 The scatter plot shows a weak positive relationship between economic insecurity and climate efficacy, as indicated by the upward-sloping regression line. This suggests that, at the bivariate level, higher economic insecurity is not associated with lower perceived agency, and if anything, the relationship appears slightly positive.
 
-However, the relationship is relatively flat and the data are widely dispersed, this means that substantial variation in climate efficacy at all levels of insecurity. This suggests that economic insecurity alone is not a strong predictor of perceived climate agency.
+However, the relationship is relatively flat and the data are widely dispersed. Economic insecurity alone is not a strong predictor of perceived climate agency.
 
 In relation to the hypothesis, these descriptive results do not provide clear support for the expected negative relationship. Instead, they highlight the need to account for additional factors, particularly climate worry, to better isolate the effect of economic insecurity on perceived agency.
 
 ### **Inferential stats:**
 
-Because the gender and income perception have 9 coded as NA, I changed it (probably should move it to the data cleaning section).
-
 ```{r}
-data_clean <- data_clean %>%
-  mutate(
-    # Convert to numeric FIRST
-    gender = as.numeric(as.character(gender)),
-    Income_perception = as.numeric(as.character(Income_perception)),
-    
-    # Remove invalid codes
-    gender = na_if(gender, 9),
-    Income_perception = na_if(Income_perception, 9),
-    
-    # Convert to factor AFTER cleaning
-    gender = factor(gender),
-    Income_perception = factor(Income_perception)
-  ) %>%
-  drop_na(gender, Income_perception)
+library(modelsummary)
 ```
 
 ```{r}
 # Model 1: Bivariate relationship 
 model1 <- lm(climate_efficacy ~ econ_insecurity, data = data_clean)
 
-summary(model1)
+modelsummary(model1,
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-In Model 1, the bivariate relationship between economic insecurity and climate efficacy is small and not statistically significant (*B* = 0.075, p = 0.304). This indicates that, on its own, economic insecurity is not associated with lower perceived climate agency, and the direction of the relationship is slightly positive rather than negative.
+The first model testing economic insecurity predicting climate efficacy, has a positive coefficient that is significant (B = 0.296, p \< 0.01), which allows us to say that higher economic insecurity is actually associated with higher perceived climate efficacy, which goes against our hypothesis. R² = 0.014.
 
 ```{r}
 # Model 2: Add climate worry (core control)
 model2 <- lm(climate_efficacy ~ econ_insecurity + climate_worry, data = data_clean)
 
-summary(model2)
+modelsummary(model2,
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-In Model 2, after controlling for climate worry, the coefficient for economic insecurity remains positive and non-significant, while climate worry emerges as a strong and statistically significant predictor (*B*= 0.489, p \< 0.001). This suggests that perceived agency is more closely related to concern about climate change than to economic insecurity.
+Model 2 adds climate worry. Economic insecurity stays positive and significant (B = 0.257, p \< 0.01), and climate worry is a strong predictor (B = 0.749, p \< 0.001). Indicating that people who worry more about climate change feel more capable of acting on it. R² goes up to 0.083, and most of that improvement is coming from climate worry, not insecurity.
 
 ```{r}
 # Model 3: Full model with controls
 model3 <- lm(climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
                age + eduyrs + gender + country,
              data = data_clean)
-summary(model3)
+modelsummary(model3,
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-In the full model (Model 3), the effect of economic insecurity remains small and non-significant (*B* = 0.075, p = 0.304), providing no support for the hypothesis that higher insecurity reduces perceived climate efficacy. In contrast, climate worry continues to have a strong positive association with efficacy, and age shows a small but significant negative effect (*B* = -0.007, p \< 0.01), indicating that older individuals report slightly lower perceived agency. Gender is also significant, with women reporting higher climate efficacy than men (*B* = 0.478, p \< 0.01).
+Model 3 adds all controls. The coefficient for economic insecurity drops to 0.138 and is no longer significant. Climate worry stays strong at 0.653 (p \< 0.001). Income perception categories are all non-significant across the board.
 
-Overall, these results do not support the main hypothesis. Economic insecurity does not appear to reduce perceived climate agency, and the expected negative relationship is not observed. Instead, perceived efficacy is more strongly explained by climate concern than by economic conditions.
+All three models don't support H1. Economic insecurity doesn't reduce perceived climate agency, the regression models show that the raw association actually goes in the opposite direction, and once we control for other factors the relationship disappears entirely. Climate worry is consistently the strongest predictor across all three models, which is not surprising as it is showing that what drives perceived ability to act is concern about the issue itself, not material conditions.
 
 ### Robustness check:
 
@@ -305,7 +310,7 @@ The dispersion of the data remains high across all levels of insecurity, suggest
 
 The robustness check supports the initial results: the expected negative relationship is not observed, and the findings remain stable across specifications.
 
-### **Classification: Predictive modelling** 
+### **Predictive modelling**
 
 **Train-test split for the main model:**
 
@@ -530,3 +535,17 @@ The predictive performance of the lasso model remains very weak. The RMSE of 2.5
 **Conclusion of Predictive modelling:**
 
 A better predictive model would not necessarily involve a different estimation technique, but rather the inclusion of more theoretically relevant predictors that capture the psychological and behavioral dimensions of climate efficacy. The current results suggest that economic and demographic variables alone are insufficient to accurately predict individual-level variation in climate efficacy.
+
+**References**
+
+European Commission. (2020). Recovery plan for Europe.[ https://commission.europa.eu/strategy-and-policy/recovery-plan-europe_en](https://commission.europa.eu/strategy-and-policy/recovery-plan-europe_en)
+
+European Commission. (2023). Special Eurobarometer 538: Climate change.[ https://cyprus.representation.ec.europa.eu/news/eurobarometer-majority-europeans-consider-green-transition-should-go-faster-2023-07-20_en](https://cyprus.representation.ec.europa.eu/news/eurobarometer-majority-europeans-consider-green-transition-should-go-faster-2023-07-20_en)
+
+Infra4NextGen. (2024). About Infra4NextGen.[ https://infra4nextgen.com/about-infra4nextgen/](https://infra4nextgen.com/about-infra4nextgen/)
+
+Mullainathan, S., & Shafir, E. (2020). Scarcity: Why having too little means so much. Picador.
+
+Jaglan, M., & Shergill, A. (2024). People’s decisions matter: an empirical examination of behavioral contributors of poverty. Journal of Poverty, 29(3), 257–276. https://doi.org/10.1080/10875549.2024.2379778
+
+Camp, S. (2022). Delay discounting and financial insecurity: Evidence from behavioral economic experiments. **Journal of Behavioral and Experimental Economics**, 97, 101847.
