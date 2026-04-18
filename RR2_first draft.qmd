@@ -37,14 +37,6 @@ If this hypothesis is confirmed, then the findings would be important especially
 The data used in this study comes from the CRONOS-3 panel survey. CRONOS-3, is a cross-national online panel survey run across 11 countries: Austria, Belgium, Czechia, Finland, France, Hungary, Iceland, Portugal, Slovenia, Sweden, and the United Kingdom. Respondents were recruited on the back of ESS and invited to complete the survey online or via paper questionnaire, with each wave covering 18 questions per theme. The data used in this paper comes from Wave 2 of CRONOS-3, conducted between November and December 2024.
 
 ```{r}
-#| include: false
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE
-)
-```
-
-```{r}
 # Load packages
 library(tidyverse)
 
@@ -131,6 +123,7 @@ data_clean <- data %>%
     climate_efficacy,
     climate_fatalism,
     econ_insecurity,
+    w2eq15,
     Income_perception,
     climate_worry,
     age,
@@ -250,6 +243,8 @@ In relation to the hypothesis, these descriptive results do not provide clear su
 
 ### **Inferential stats:**
 
+To test the hypothesis, I estimate a series of linear regression models that progressively introduce additional controls. I begin with a baseline model that examines the direct relationship between economic insecurity and climate self-efficacy. This allows me to assess whether there is any raw association between the two variables. I then add climate worry as a key control, in order to distinguish the effect of economic insecurity from general concern about climate change, which is likely to be strongly related to perceived ability to act. Finally, I estimate a full model that includes socio-demographic controls such as income perception, age, education, gender, and country. This step allows me to account for potential confounding factors and test whether the relationship between economic insecurity and climate efficacy holds once these characteristics are taken into account.
+
 ```{r}
 library(modelsummary)
 ```
@@ -259,6 +254,7 @@ library(modelsummary)
 model1 <- lm(climate_efficacy ~ econ_insecurity, data = data_clean)
 
 modelsummary(model1,
+             output = "markdown",
              stars = TRUE,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
@@ -270,6 +266,7 @@ The first model testing economic insecurity predicting climate efficacy, has a p
 model2 <- lm(climate_efficacy ~ econ_insecurity + climate_worry, data = data_clean)
 
 modelsummary(model2,
+             output = "markdown",
              stars = TRUE,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
@@ -282,33 +279,141 @@ model3 <- lm(climate_efficacy ~ econ_insecurity + Income_perception + climate_wo
                age + eduyrs + gender + country,
              data = data_clean)
 modelsummary(model3,
+             output = "markdown",
              stars = TRUE,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-Model 3 adds all controls. The coefficient for economic insecurity drops to 0.138 and is no longer significant. Climate worry stays strong at 0.653 (p \< 0.001). Income perception categories are all non-significant across the board.
+Model 3 adds all controls. The coefficient for economic insecurity drops to 0.136 and is no longer significant. Climate worry stays strong at 0.653 (p \< 0.001). Income perception categories are all non-significant across the board.
 
 All three models don't support H1. Economic insecurity doesn't reduce perceived climate agency, the regression models show that the raw association actually goes in the opposite direction, and once we control for other factors the relationship disappears entirely. Climate worry is consistently the strongest predictor across all three models, which is not surprising as it is showing that what drives perceived ability to act is concern about the issue itself, not material conditions.
 
 ### Robustness check:
 
+The main analysis found no significant relationship between economic insecurity and climate efficacy. Before drawing conclusions, we need to check whether this result holds across different analytical decisions. We do this in four ways: using climate fatalism as an alternative outcome, removing outliers, using a single insecurity item instead of the full index, and replacing list-wise deletion with multiple imputation.
+
+Our hypothesis is about perceived climate agency, which we measured primarily through climate efficacy. But we also have a second measure of the same construct: climate fatalism (w2gq8), which captures whether people feel it is too difficult for someone like them to contribute. If economic insecurity matters for perceived agency, we should see it show up here too.
+
+Reminder: For climate fatalism; the scale goes from 1 (agree it's too difficult to act) to 5 (disagree strongly), so a negative coefficient means moving toward more fatalism: more feeling that action is out of reach.
+
 ```{r}
 model4 <- lm(climate_fatalism ~ econ_insecurity + climate_worry +
                age + eduyrs + gender + country,
              data = data_clean)
-summary(model4)
 
-ggplot(data_clean, aes(x = econ_insecurity, y = climate_efficacy)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm")
-
+modelsummary(model4,
+             output = "markdown",
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-The robustness check confirms the main findings. The relationship between economic insecurity and climate efficacy remains weak and slightly positive, as indicated by the upward-sloping regression line. This is consistent with the regression results, where the coefficient for economic insecurity was small and not statistically significant (*B* = 0.075, p = 0.304).
+Economic insecurity is negative and strongly significant (B = -0.157, p \< 0.001). Higher economic insecurity is indeed associated with stronger agreement that it's too difficult for someone like them to act on the environment. This is the one model where we can actually find support for the logic behind our hypothesis. Climate worry is positive and significant (B = 0.131, p \< 0.01) (people who worry more are less fatalistic, which makes intuitive sense). Age is negative and significant (B = -0.008, p \< 0.01), so older respondents lean more fatalistic. Education is positive and significant (B = 0.024, p \< 0.05) so more educated people are slightly less fatalistic. However, R² = 0.076, so the model explains about 7.6% of the variance in fatalism, which is lower than model 3.
 
-The dispersion of the data remains high across all levels of insecurity, suggesting that individuals with both low and high economic insecurity report similar levels of climate efficacy. This reinforces the conclusion that economic insecurity is not a strong predictor of perceived climate agency.
+**A single item economic instability measure:**
 
-The robustness check supports the initial results: the expected negative relationship is not observed, and the findings remain stable across specifications.
+The economic insecurity index averages four items together. The results depend on how we measure the independent variable. To check, we re-run the main model using only w2eq15 (the item asking how likely the respondent is to be unable to pay for basic household necessities) as the predictor instead of the full index:
+
+```{r}
+model_single_item <- lm(climate_efficacy ~ w2eq15 + Income_perception +
+                          climate_worry + age + eduyrs + gender + country,
+                        data = data_clean)
+
+modelsummary(list("Single Item" = model_single_item),
+             output = "markdown",
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared", "adj.r.squared"))
+```
+
+Removing outliars for sensitivity checks:
+
+box plots:
+
+```{r}
+# Boxplots to inspect potential outliers
+ggplot(data_clean, aes(y = climate_efficacy)) +
+  geom_boxplot(fill = "pink", alpha = 0.7) +
+  labs(title = "Boxplot of Climate Efficacy",
+       y = "Climate Efficacy")
+
+ggplot(data_clean, aes(y = econ_insecurity)) +
+  geom_boxplot(fill = "brown", alpha = 0.7) +
+  labs(title = "Boxplot of Economic Insecurity",
+       y = "Economic Insecurity")
+```
+
+Boxplots of the two main variables revealed no outliers in either climate efficacy or economic insecurity. All values fell within the expected range under the 1.5×IQR rule. An outlier-removal sensitivity check is therefore not applicable.
+
+**Multiple imputation with MICE**
+
+So far we have handled missing values by dropping any observation with a missing value on any variable (listwise deletion). This is simple but potentially biased if the data are not missing completely at random. As a check, we re-run the main model on a dataset where missing values are replaced using multiple imputation via the MICE package.
+
+```{r}
+library(mice)
+
+# Select the variables we need from the original data object
+data_for_mice <- data %>%
+  select(w2gq12, w2gq8, w2gq1, 
+         w2eq15, w2eq16, w2eq17, w2eq18,
+         hincfel, age, eduyrs, gndr, cntry) %>%
+  mutate(
+    climate_efficacy  = w2gq12,
+    climate_fatalism  = w2gq8,
+    climate_worry     = w2gq1,
+    econ_insecurity   = rowMeans(select(., w2eq15:w2eq18), na.rm = TRUE),
+    gender            = factor(gndr),
+    country           = factor(cntry),
+    Income_perception = factor(hincfel)
+  ) %>%
+  select(climate_efficacy, climate_fatalism, econ_insecurity,
+         Income_perception, climate_worry, age, eduyrs, gender, country)
+
+# Run imputation
+set.seed(1234)
+imputed <- mice(data_for_mice, m = 5, method = "pmm", printFlag = FALSE)
+
+# Run the main model on each imputed dataset and pool
+model_mice <- with(imputed,
+                   lm(climate_efficacy ~ econ_insecurity + Income_perception +
+                        climate_worry + age + eduyrs + gender + country))
+
+pooled <- pool(model_mice)
+
+# Display results
+summary(pooled)
+```
+
+The MICE results are very consistent with the main model, which is exactly what we want to see from a robustness check.
+
+Economic insecurity remains non-significant (B = 0.083, p = 0.147), just like in model 3. So even when we use imputed data instead of dropping missing observations, the conclusion doesn't change — economic insecurity does not significantly predict climate efficacy.
+
+Climate worry is again the dominant predictor (B = 0.620, p \< 0.001), confirming that this finding is stable regardless of how we handle missing data. Gender remains significant (B = 0.454, p \< 0.05), with women reporting higher efficacy. Age is also significant here (B = 0.008, p \< 0.001), though the effect is very small. Education is not significant.
+
+On the country side, several countries are now significant with the larger imputed sample: Belgium is notably negative (B = -0.441, p \< 0.001), while Finland (B = 0.530, p \< 0.001), Hungary (B = 0.923, p \< 0.001), Iceland (B = 0.333, p \< 0.05), Portugal (B = 1.242, p \< 0.001), and Slovenia (B = 0.231, p \< 0.05) are all significantly different from the reference category. Imputation retains more observations so the model has more power to detect country differences.
+
+=\> Economic insecurity does not predict climate efficacy, and this is not an artifact of how we handled missing values.
+
+Finally, to get a broader picture of how stable our results are across different model specifications, we use the specr package to run all reasonable combinations of outcomes, predictors, and controls at once and visualise the results in a specification curve.
+
+```{r}
+library(specr)
+
+# Run specr
+setup_results <- setup(
+  data = data_clean,
+  y = c("climate_efficacy", "climate_fatalism"),
+  x = c("econ_insecurity", "w2eq15"),
+  model = c("lm"),
+  controls = c("climate_worry", "age", "eduyrs", "gender", "country")
+)
+
+results <- specr(setup_results)
+
+# Cleaner plot
+plot(results, 
+     choices = c("x", "y", "controls"))
+```
+
+From the curve we can conclude that the results are robust to model specification, but sensitive to outcome measurement. Economic insecurity consistently predicts more fatalism and consistently fails to predict efficacy, and this pattern holds across every combination of controls and predictor operationalisations we tested
 
 ### **Predictive modelling**
 
@@ -538,11 +643,11 @@ A better predictive model would not necessarily involve a different estimation t
 
 **References**
 
-European Commission. (2020). Recovery plan for Europe.[ https://commission.europa.eu/strategy-and-policy/recovery-plan-europe_en](https://commission.europa.eu/strategy-and-policy/recovery-plan-europe_en)
+European Commission. (2020). Recovery plan for Europe.<https://commission.europa.eu/strategy-and-policy/recovery-plan-europe_en>
 
-European Commission. (2023). Special Eurobarometer 538: Climate change.[ https://cyprus.representation.ec.europa.eu/news/eurobarometer-majority-europeans-consider-green-transition-should-go-faster-2023-07-20_en](https://cyprus.representation.ec.europa.eu/news/eurobarometer-majority-europeans-consider-green-transition-should-go-faster-2023-07-20_en)
+European Commission. (2023). Special Eurobarometer 538: Climate change.<https://cyprus.representation.ec.europa.eu/news/eurobarometer-majority-europeans-consider-green-transition-should-go-faster-2023-07-20_en>
 
-Infra4NextGen. (2024). About Infra4NextGen.[ https://infra4nextgen.com/about-infra4nextgen/](https://infra4nextgen.com/about-infra4nextgen/)
+Infra4NextGen. (2024). About Infra4NextGen.<https://infra4nextgen.com/about-infra4nextgen/>
 
 Mullainathan, S., & Shafir, E. (2020). Scarcity: Why having too little means so much. Picador.
 
