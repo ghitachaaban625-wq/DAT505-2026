@@ -5,6 +5,10 @@ format:
     self_contained: true
     toc: true
     embed-resources: true
+execute:
+  warning: false
+  message: false
+  echo: true
 editor: visual
 author: Chita Chaaban
 date: Winter 2026
@@ -259,7 +263,7 @@ modelsummary(model1,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-The first model testing economic insecurity predicting climate efficacy, has a positive coefficient that is significant (B = 0.296, p \< 0.01), which allows us to say that higher economic insecurity is actually associated with higher perceived climate efficacy, which goes against our hypothesis. R² = 0.014.
+The first model testing economic insecurity predicting climate efficacy, has a positive coefficient that is significant (B = 0.267, p \< 0.01), which allows us to say that higher economic insecurity is actually associated with higher perceived climate efficacy, which goes against our hypothesis. R² = 0.011.
 
 ```{r}
 # Model 2: Add climate worry (core control)
@@ -271,7 +275,7 @@ modelsummary(model2,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-Model 2 adds climate worry. Economic insecurity stays positive and significant (B = 0.257, p \< 0.01), and climate worry is a strong predictor (B = 0.749, p \< 0.001). Indicating that people who worry more about climate change feel more capable of acting on it. R² goes up to 0.083, and most of that improvement is coming from climate worry, not insecurity.
+Model 2 adds climate worry. Economic insecurity stays positive and significant (B = 0.225, p \< 0.01), and climate worry is a strong predictor (B = 0.728, p \< 0.001). Indicating that people who worry more about climate change feel more capable of acting on it. R² goes up to 0.078, and most of that improvement is coming from climate worry, not insecurity.
 
 ```{r}
 # Model 3: Full model with controls
@@ -284,7 +288,7 @@ modelsummary(model3,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-Model 3 adds all controls. The coefficient for economic insecurity drops to 0.136 and is no longer significant. Climate worry stays strong at 0.653 (p \< 0.001). Income perception categories are all non-significant across the board.
+Model 3 adds all controls. The coefficient for economic insecurity drops to 0.099 and is no longer significant. Climate worry stays strong at 0.640 (p \< 0.001). Income perception categories are all non-significant across the board. R²=0.132, the model explains 13.2 of the variation which is higher than all models tested so far.
 
 All three models don't support H1. Economic insecurity doesn't reduce perceived climate agency, the regression models show that the raw association actually goes in the opposite direction, and once we control for other factors the relationship disappears entirely. Climate worry is consistently the strongest predictor across all three models, which is not surprising as it is showing that what drives perceived ability to act is concern about the issue itself, not material conditions.
 
@@ -307,24 +311,9 @@ modelsummary(model4,
              gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
-Economic insecurity is negative and strongly significant (B = -0.157, p \< 0.001). Higher economic insecurity is indeed associated with stronger agreement that it's too difficult for someone like them to act on the environment. This is the one model where we can actually find support for the logic behind our hypothesis. Climate worry is positive and significant (B = 0.131, p \< 0.01) (people who worry more are less fatalistic, which makes intuitive sense). Age is negative and significant (B = -0.008, p \< 0.01), so older respondents lean more fatalistic. Education is positive and significant (B = 0.024, p \< 0.05) so more educated people are slightly less fatalistic. However, R² = 0.076, so the model explains about 7.6% of the variance in fatalism, which is lower than model 3.
+Economic insecurity is negative and strongly significant (B = -0.157, p \< 0.001). Higher economic insecurity is indeed associated with stronger agreement that it's too difficult for someone like them to act on the environment. This is the one model where we can actually find support for the logic behind our hypothesis. Climate worry is positive and significant (B = 0.131, p \< 0.01) (people who worry more are less fatalistic, which makes intuitive sense). Age is negative and significant (B = -0.008, p \< 0.01), so older respondents lean more fatalistic. Education is positive and significant (B = 0.024, p \< 0.05) so more educated people are slightly less fatalistic. However, R² = 0.079, so the model explains about 7.6% of the variance in fatalism, which is lower than model 3.
 
-**A single item economic instability measure:**
-
-The economic insecurity index averages four items together. The results depend on how we measure the independent variable. To check, we re-run the main model using only w2eq15 (the item asking how likely the respondent is to be unable to pay for basic household necessities) as the predictor instead of the full index:
-
-```{r}
-model_single_item <- lm(climate_efficacy ~ w2eq15 + Income_perception +
-                          climate_worry + age + eduyrs + gender + country,
-                        data = data_clean)
-
-modelsummary(list("Single Item" = model_single_item),
-             output = "markdown",
-             stars = TRUE,
-             gof_map = c("nobs", "r.squared", "adj.r.squared"))
-```
-
-Removing outliars for sensitivity checks:
+**Removing outliars for sensitivity checks:**
 
 box plots:
 
@@ -417,6 +406,8 @@ From the curve we can conclude that the results are robust to model specificatio
 
 ### **Predictive modelling**
 
+To evaluate whether the model has predictive power beyond the sample used for estimation, I implement a series of predictive validation techniques.
+
 **Train-test split for the main model:**
 
 To see whether the main model from the analysis can predict new observations, not just fit the sample used to estimate it, we first split the data into a training set and a test set. Then we estimate the model on the training set, and then evaluate how well it predicts climate efficacy in the test set. Since the outcome is continuous, I use RMSE and R-squared to assess predictive performance.
@@ -463,7 +454,7 @@ kable(
 )
 ```
 
-The predictive performance of the model on the test set is relatively weak. The RMSE of 2.57 indicates that, on average, the model’s predictions deviate from the true climate efficacy scores by about 2.6 points. Given that the outcome is measured on a 0–10 scale, this represents a fairly large prediction error.
+The predictive performance of the model on the test set is relatively weak. The RMSE of 2.55 indicates that, on average, the model’s predictions deviate from the true climate efficacy scores by about 2.6 points. Given that the outcome is measured on a 0–10 scale, this represents a fairly large prediction error.
 
 The R-squared of 0.03 shows that the model explains only 3% of the variance in climate efficacy in unseen data. This is very low, indicating that the model has limited ability to capture the factors that drive differences in climate efficacy across individuals.
 
@@ -490,16 +481,19 @@ cv_model <- train(
   trControl = train_control_cv
 )
 
-print(cv_model)
+cv_results <- data.frame(
+  Method = "10-fold Cross-Validation",
+  RMSE = round(cv_model$results$RMSE, 3),
+  R_squared = round(cv_model$results$Rsquared, 3),
+  MAE = round(cv_model$results$MAE, 3)
+)
+
+kable(cv_results, caption = "Predictive performance: 10-fold cross-validation")
 ```
 
-The cross-validation results confirm that the predictive performance of the model remains limited. The RMSE of 2.45 indicates that, on average, the model’s predictions deviate from the true values of climate efficacy by approximately 2.5 points on the 0–10 scale. This is a relatively large prediction error given the range of the outcome variable.
+The cross-validation results confirm that the predictive performance of the model remains limited. The RMSE of 2.45 indicates that, on average, the model’s predictions deviate from the true values of climate efficacy by approximately 2.5 points on the 0–10 scale. This is a relatively large prediction error given the range of the outcome variable (11point scale).
 
-The R-squared is approximately 0.096, meaning that the model explains about 9.6% of the variance in climate efficacy across the different validation folds. While this is slightly higher than the test set estimate, it still indicates that the vast majority of the variation in climate efficacy remains unexplained.
-
-The MAE of 1.99 provides a complementary measure of prediction error and suggests that the average absolute deviation between predicted and observed values is around 2 points. This reinforces the conclusion that prediction errors are substantial in magnitude.
-
-Overall, these cross-validation results are consistent with the earlier train-test split findings. They suggest that the model has weak predictive performance, even when evaluated across multiple data partitions. This indicates that the limited predictive power is not due to a particular data split, but rather reflects a more general limitation of the model and the available predictors.
+The model explains about 9.2% of the variance in climate efficacy across folds (R² = 0.092), meaning the vast majority of individual differences in perceived climate agency are not captured by the predictors we have. The MAE of 1.987 tells us the average absolute prediction error is just under 2 points, which reinforces the same conclusion.
 
 **Bootstrap validation**
 
@@ -514,7 +508,14 @@ train_control_boot <- trainControl( method = "boot", number = 100 )
 
 boot_model <- train( climate_efficacy ~ econ_insecurity + Income_perception + climate_worry + age + eduyrs + gender + country, data = data_clean, method = "lm", metric = "RMSE", trControl = train_control_boot )
 
-print(boot_model)
+boot_results <- data.frame(
+  Method = "Bootstrap (100 reps)",
+  RMSE = round(boot_model$results$RMSE, 3),
+  R_squared = round(boot_model$results$Rsquared, 3),
+  MAE = round(boot_model$results$MAE, 3)
+)
+
+kable(boot_results, caption = "Predictive performance: bootstrap validation")
 ```
 
 The bootstrap validation results further confirm the limited predictive performance of the model. The RMSE is 2.47, which is very close to the value obtained through cross-validation. This indicates that the average prediction error remains substantial, with predicted values deviating from observed climate efficacy by roughly 2.5 points.
@@ -527,15 +528,14 @@ The consistency of RMSE and MAE across validation methods, combined with persist
 
 **A data-driven approach: lasso regression:**
 
-The previous analyses evaluated the predictive performance of a theory-driven model. Noow we extend the analysis by adopting a more data-driven approach. Specifically, we use lasso regression, which applies a penalty to the model coefficients and shrinks less informative predictors toward zero. This allows the model to identify a more parsimonious specification that may improve predictive performance.
+The previous analyses evaluated the predictive performance of a theory-driven model. Now we extend the analysis by adopting a more data-driven approach. Specifically, we use lasso regression, which applies a penalty to the model coefficients and shrinks less informative predictors toward zero. This allows the model to identify a more parsimonious specification that may improve predictive performance.
 
 ```{r}
 library(glmnet)
-
-# Create predictor matrix
+# Create predictor matrix with all relevant variables
 x <- model.matrix(
   climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
-    age + eduyrs + gender + country,
+    age + eduyrs + gender + country + climate_fatalism + w2eq15,
   data = data_clean
 )[, -1]
 
@@ -552,22 +552,34 @@ cv_lasso <- cv.glmnet(
 )
 
 # Lambda values
-data.frame(
-  Lambda_min = cv_lasso$lambda.min,
-  Lambda_1se = cv_lasso$lambda.1se
-)
+kable(data.frame(
+  Lambda_min = round(cv_lasso$lambda.min, 3),
+  Lambda_1se = round(cv_lasso$lambda.1se, 3)),
+  caption = "Cross-validated lambda values")
 
-# Coefficients
-coef(cv_lasso, s = "lambda.min")
+# Non-zero coefficients at lambda.min
+lasso_coefs <- as.data.frame(as.matrix(coef(cv_lasso, s = "lambda.min")))
+lasso_coefs <- lasso_coefs %>%
+  rownames_to_column("Predictor") %>%
+  rename(Coefficient = 2) %>%
+  filter(Coefficient != 0) %>%
+  mutate(Coefficient = round(Coefficient, 3))
+
+kable(lasso_coefs, caption = "Lasso coefficients at lambda.min (non-zero only)")
+
+# Cross-validated RMSE
+kable(data.frame(
+  CV_RMSE = round(sqrt(min(cv_lasso$cvm)), 3)),
+  caption = "Cross-validated RMSE of lasso model")
 ```
 
-Interpretation of lasso results (lambda): The optimal penalty parameter selected through cross-validation is λ = 0.0436 (lambda_min), which corresponds to the model with the lowest prediction error. The alternative, λ = 0.2802 (lambda_1se), represents a more conservative specification with stronger penalization. The relatively low value of λ at lambda.min suggests that only moderate shrinkage is needed to optimize predictive performance.
+The optimal penalty selected through cross-validation is λ = 0.079, which is relatively low, meaning only moderate shrinkage was needed to optimize predictive performance. The more conservative alternative, λ = 0.291, would shrink more predictors to zero but at the cost of higher prediction error.
 
-Interpretation of lasso coefficients: The lasso results show that several predictors are shrunk to zero, meaning they do not contribute meaningfully to prediction once the penalty is applied. In particular, most categories of Income_perception are eliminated, suggesting that this variable adds little predictive value beyond other controls.
+Looking at the retained coefficients, several predictors were shrunk to exactly zero and dropped entirely (all income perception categories and age) meaning they add nothing once the other variables are in the model. Among the predictors that survived, climate worry is the strongest (0.536), confirming what we saw throughout the inferential analysis. Climate fatalism is also retained with a meaningful coefficient (0.386). Gender (0.371) and country differences, particularly Portugal (1.072) and Hungary (0.573), also contribute to prediction.
 
-Among the retained predictors, climate_worry remains the strongest positive predictor, confirming its central role in explaining variation in climate efficacy. gender and several country fixed effects also remain important, indicating that demographic and contextual differences contribute to prediction.
+Economic insecurity is retained but with a very small coefficient (0.048), and w2eq15 similarly survives at 0.118. So while neither is shrunk to zero, their contribution to prediction is minimal compared to climate worry and fatalism.
 
-In contrast, econ_insecurity is retained but with a very small coefficient, suggesting that it has only a limited contribution to predictive performance. Similarly, age and education have very small effects, indicating weak predictive relevance.
+The cross-validated RMSE of 2.376 is slightly better than the theory-driven model's 2.434, but the improvement is marginal. Adding more variables through the data-driven lasso approach didn't dramatically improve predictive accuracy. The available predictors don't capture enough of what drives individual differences in perceived climate agency.
 
 **Predictive performance of the lasso model:**
 
@@ -575,42 +587,31 @@ To directly compare the predictive performance of the lasso model with the origi
 
 ```{r}
 
-# Set a seed
 set.seed(1234)
 
-# Randomly split the data into 80% training data and 20% test data
 train_index <- createDataPartition(data_clean$climate_efficacy, p = 0.8, list = FALSE)
+train_data  <- data_clean[train_index, ]
+test_data   <- data_clean[-train_index, ]
 
-# Create the training and test datasets
-train_data <- data_clean[train_index, ]
-test_data  <- data_clean[-train_index, ]
-
-# Build the predictor matrix for the training data
-# model.matrix() turns categorical predictors into dummy variables
-# We remove the first column because it is the intercept
+# Predictor matrix for training data
 x_train <- model.matrix(
   climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
-    age + eduyrs + gender + country,
+    age + eduyrs + gender + country + climate_fatalism + w2eq15,
   data = train_data
 )[, -1]
 
-# Define the outcome variable for the training data
 y_train <- train_data$climate_efficacy
 
-# Build the predictor matrix for the test data using the same predictors
+# Predictor matrix for test data
 x_test <- model.matrix(
   climate_efficacy ~ econ_insecurity + Income_perception + climate_worry +
-    age + eduyrs + gender + country,
+    age + eduyrs + gender + country + climate_fatalism + w2eq15,
   data = test_data
 )[, -1]
 
-# Define the outcome variable for the test data
 y_test <- test_data$climate_efficacy
 
-# Fit a lasso regression on the training data
-# alpha = 1 specifies lasso
-# family = "gaussian" is used because the outcome is continuous
-# nfolds = 10 means that lambda is selected through 10-fold cross-validation
+# Fit lasso on training data with cross-validated lambda
 cv_lasso_train <- cv.glmnet(
   x_train, y_train,
   alpha = 1,
@@ -618,26 +619,22 @@ cv_lasso_train <- cv.glmnet(
   nfolds = 10
 )
 
-# Use the fitted lasso model to predict climate efficacy in the test set
-# lambda.min gives the value of lambda with the lowest cross-validated error
+# Predict on test set
 lasso_pred <- predict(cv_lasso_train, newx = x_test, s = "lambda.min")
 
-# Calculate RMSE to measure the average prediction error
+# Performance metrics
 rmse_lasso <- RMSE(as.numeric(lasso_pred), y_test)
+r2_lasso <- R2(as.numeric(lasso_pred), y_test)
 
-# Calculate R-squared to measure how much variance is explained in the test set
-r2_lasso   <- R2(as.numeric(lasso_pred), y_test)
-
-# Display the predictive performance of the lasso model
-data.frame(
-  RMSE = rmse_lasso,
-  R_squared = r2_lasso
-)
+kable(data.frame(
+  RMSE = round(rmse_lasso, 3),
+  R_squared = round(r2_lasso, 3)),
+  caption = "Predictive performance of lasso model on test set")
 ```
 
-The predictive performance of the lasso model remains very weak. The RMSE of 2.56 indicates that the average prediction error is virtually identical to that of the main model, with predicted values deviating from observed climate efficacy by about 2.5 points. The R-squared is 0.031, meaning that the model explains only around 3.1% of the variance in climate efficacy in the test set. This is nearly identical to the performance of the original model, suggesting that the lasso specification does not improve predictive accuracy.
+The lasso model on the test set gives an RMSE of 2.469 and an R² of 0.137. Compared to the theory-driven model's test set performance (RMSE = 2.553, R² = 0.087), this is a modest improvement: adding more variables and letting lasso select among them explains a bit more variance and reduces prediction error slightly. However, the improvement is small and the overall picture is the same: predictions still deviate from true climate efficacy scores by about 2.5 points on average, and the model still leaves most of the variance unexplained. The cross-validated RMSE of 2.376 is slightly more optimistic than the test set result. Overall, neither the theory-driven nor the data-driven approach produces a model with strong predictive power, which suggests that the variables available in this dataset, economic, demographic, and basic attitudinal measures; are not sufficient to accurately predict individual-level climate efficacy.
 
-**Conclusion of Predictive modelling:**
+**Discussion and conclusion**
 
 A better predictive model would not necessarily involve a different estimation technique, but rather the inclusion of more theoretically relevant predictors that capture the psychological and behavioral dimensions of climate efficacy. The current results suggest that economic and demographic variables alone are insufficient to accurately predict individual-level variation in climate efficacy.
 
